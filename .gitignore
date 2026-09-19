@@ -1,0 +1,27 @@
+# Build output
+bin/
+*.exe
+*.o
+
+# VS Code
+.vscode/
+
+# Temporary files
+*.log
+*.tmp
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+*.txt
+*.html
+doc/
+dependencies/
+obj/
+build.bat
+makefile
+scene.hpp
+shaders/fragment.glsl
+shaders/vertex.glsl
+src/gl.c
