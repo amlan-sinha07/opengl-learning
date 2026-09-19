@@ -1,4 +1,4 @@
-#include "gl_error_handling.hpp"
+#include "debug.hpp"
 
 #include <iostream>
 

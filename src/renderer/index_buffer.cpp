@@ -1,14 +1,14 @@
-#include "IndexBuffer.hpp"
+#include "index_buffer.hpp"
 #include "gl_helper.hpp"
 
 IndexBuffer::IndexBuffer(
     const unsigned int* data,
     unsigned int count
 )
-    : m_RenderedID(0),
-      m_Count(count)
+    : m_id(0),
+      m_count(count)
 {
-    m_RenderedID = GLHelper::createAndUploadBuffer(
+    m_id = GLHelper::createAndUploadBuffer(
         GL_ELEMENT_ARRAY_BUFFER,
         count * sizeof(unsigned int),
         data,
@@ -18,12 +18,12 @@ IndexBuffer::IndexBuffer(
 
 IndexBuffer::~IndexBuffer()
 {
-    GLHelper::destroyBuffer(m_RenderedID);
+    GLHelper::destroyBuffer(m_id);
 }
 
 void IndexBuffer::bind() const
 {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderedID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_id);
 }
 
 void IndexBuffer::unbind() const
@@ -33,5 +33,5 @@ void IndexBuffer::unbind() const
 
 unsigned int IndexBuffer::getCount() const
 {
-    return m_Count;
+    return m_count;
 }

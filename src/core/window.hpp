@@ -1,14 +1,15 @@
 #pragma once
 
-#include "../../dependencies/include/glad/gl.h"
+#define GLFW_INCLUDE_NONE
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 class Window
 {
 private:
-    GLFWwindow* m_window_{nullptr};
-    int m_width_;
-    int m_height_;
+    GLFWwindow* m_window{nullptr};
+    int m_width;
+    int m_height;
     static void glfwErrorCallback(int error, const char* description);
 
     static void framebufferSizeCallback(

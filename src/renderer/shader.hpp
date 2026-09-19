@@ -1,12 +1,11 @@
-#ifndef SHADER_HPP
-#define SHADER_HPP
+#pragma once
 
-#include "../../dependencies/include/glad/gl.h"
+#include <glad/gl.h>
 #include <string>
 
 class Shader {
     private:
-        GLuint ID;
+        GLuint m_id;
     public:
         Shader(const char* vertexPath,const char* fragmentPath);
 
@@ -18,10 +17,8 @@ class Shader {
             float z,
             float w
         );
-        GLuint getID() const;
+        GLuint getId() const;
 
         ~Shader();
-        
-};
 
-#endif
+};

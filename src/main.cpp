@@ -1,12 +1,12 @@
 #include <glad/gl.h>
 
-#include "core/Window.hpp"
+#include "core/window.hpp"
+#include "core/debug.hpp"
 #include "renderer/shader.hpp"
-#include "renderer/IndexBuffer.hpp"
-#include "renderer/vao.hpp"
-#include "renderer/VertexBuffer.hpp"
+#include "renderer/index_buffer.hpp"
+#include "renderer/vertex_array.hpp"
+#include "renderer/vertex_buffer.hpp"
 #include "renderer/buffer_layout.hpp"
-#include "gl_error_handling.hpp"
 
 #include <iostream>
 

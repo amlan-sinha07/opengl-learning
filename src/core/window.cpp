@@ -1,6 +1,6 @@
 #include <glad/gl.h>
 
-#include "Window.hpp"
+#include "window.hpp"
 
 #include <iostream>
 
@@ -18,8 +18,8 @@ void Window::framebufferSizeCallback(
 
     if (self)
     {
-        self->m_width_ = width;
-        self->m_height_ = height;
+        self->m_width = width;
+        self->m_height = height;
     }
 }
 void Window::glfwErrorCallback(int error, const char* description)
@@ -31,8 +31,8 @@ Window::Window(
     int width,
     int height,
     const char* title)
-    : m_width_(width),
-      m_height_(height)
+    : m_width(width),
+      m_height(height)
 {
     glfwSetErrorCallback(glfwErrorCallback);
     // ----------------
@@ -63,15 +63,15 @@ Window::Window(
     // ----------------
     // Create window
     // ----------------
-    m_window_ = glfwCreateWindow(
-        m_width_,
-        m_height_,
+    m_window = glfwCreateWindow(
+        m_width,
+        m_height,
         title,
         nullptr,
         nullptr
     );
 
-    if (!m_window_)
+    if (!m_window)
     {
         std::cerr << "Window creation failed\n";
         glfwTerminate();
@@ -81,7 +81,7 @@ Window::Window(
     // ----------------
     // Make OpenGL context current
     // ----------------
-    glfwMakeContextCurrent(m_window_);
+    glfwMakeContextCurrent(m_window);
 
     // ----------------
     // Initialize GLAD
@@ -91,10 +91,10 @@ Window::Window(
     {
         std::cerr << "GLAD initialization failed\n";
 
-        glfwDestroyWindow(m_window_);
+        glfwDestroyWindow(m_window);
         glfwTerminate();
 
-        m_window_ = nullptr;
+        m_window = nullptr;
 
         return;
     }
@@ -106,7 +106,7 @@ Window::Window(
     int framebufferHeight;
 
     glfwGetFramebufferSize(
-        m_window_,
+        m_window,
         &framebufferWidth,
         &framebufferHeight
     );
@@ -123,7 +123,7 @@ Window::Window(
     // to this Window object
     // ----------------
     glfwSetWindowUserPointer(
-        m_window_,
+        m_window,
         this
     );
 
@@ -131,16 +131,16 @@ Window::Window(
     // Register resize callback
     // ----------------
     glfwSetFramebufferSizeCallback(
-        m_window_,
+        m_window,
         framebufferSizeCallback
     );
 }
 
 Window::~Window()
 {
-    if (m_window_)
+    if (m_window)
     {
-        glfwDestroyWindow(m_window_);
+        glfwDestroyWindow(m_window);
     }
 
     glfwTerminate();
@@ -148,13 +148,13 @@ Window::~Window()
 
 bool Window::shouldClose() const
 {
-    return m_window_ == nullptr ||
-           glfwWindowShouldClose(m_window_);
+    return m_window == nullptr ||
+           glfwWindowShouldClose(m_window);
 }
 
 void Window::swapBuffers() const
 {
-    glfwSwapBuffers(m_window_);
+    glfwSwapBuffers(m_window);
 }
 
 void Window::pollEvents() const
@@ -164,15 +164,15 @@ void Window::pollEvents() const
 
 GLFWwindow* Window::getNativeWindow() const
 {
-    return m_window_;
+    return m_window;
 }
 
 int Window::getWidth() const
 {
-    return m_width_;
+    return m_width;
 }
 
 int Window::getHeight() const
 {
-    return m_height_;
+    return m_height;
 }

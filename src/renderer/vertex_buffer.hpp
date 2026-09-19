@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../../dependencies/include/glad/gl.h"
+#include <glad/gl.h>
 #include <cstddef>
 
 class VertexBuffer
 {
 private:
-    GLuint rendererID;
-    GLsizeiptr size;
+    GLuint m_id;
+    GLsizeiptr m_size;
 
 public:
     VertexBuffer(const void* data, GLsizeiptr size,
@@ -21,9 +21,9 @@ public:
     VertexBuffer(VertexBuffer&& other) noexcept;
     VertexBuffer& operator=(VertexBuffer&& other) noexcept;
 
-    void Bind() const;
-    void Unbind() const;
+    void bind() const;
+    void unbind() const;
 
-    GLuint getID() const;
+    GLuint getId() const;
     GLsizeiptr getSize() const;
 };

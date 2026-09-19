@@ -2,15 +2,15 @@
 
 #include <glad/gl.h>
 
-#include "VertexBuffer.hpp"
+#include "vertex_buffer.hpp"
 #include "buffer_layout.hpp"
 
 class VertexArray
 {
 private:
-    GLuint m_RendererID_{0};
-    GLuint m_attribute_index_{0};
-    GLuint m_binding_index_{0};
+    GLuint m_id{0};
+    GLuint m_attributeIndex{0};
+    GLuint m_bindingIndex{0};
 
 public:
     VertexArray();
@@ -33,8 +33,8 @@ public:
     );
 
     [[nodiscard]]
-    auto getID() const -> GLuint
+    auto getId() const -> GLuint
     {
-        return m_RendererID_;
+        return m_id;
     }
 };
