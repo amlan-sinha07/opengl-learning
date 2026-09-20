@@ -1,9 +1,9 @@
-#ifndef INDEXBUFFER_HPP
-#define INDEXBUFFER_HPP
+#pragma once
+
 class IndexBuffer{
     private:
-    unsigned int m_RenderedID;
-    unsigned int m_Count;
+    unsigned int m_id;
+    unsigned int m_count;
     public:
     IndexBuffer(const unsigned int* data,
                 unsigned int count);
@@ -15,4 +15,3 @@ class IndexBuffer{
     unsigned int getCount() const;
 
 };
-#endif

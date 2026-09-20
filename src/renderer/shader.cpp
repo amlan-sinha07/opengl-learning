@@ -16,7 +16,7 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     if( !vertexFile.is_open()){
         std::cerr<<"Could not open shader !! "
                 <<vertexPath<<"\n";
-        ID=0;
+        m_id=0;
         return;
     }
     std::stringstream vertexStream;
@@ -36,7 +36,7 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     if( !fragmentFile.is_open()){
         std::cerr<<"Could not open fragment shader !! "
                 <<fragmentPath<<"\n";
-        ID=0;
+        m_id=0;
         return;
     }
     std::stringstream fragmentStream;
@@ -52,7 +52,7 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     //-----------------------------------
     //CREATE VERTEX SHADER
     //-----------------------------------
-    ID=GLHelper::createShaderProgram(vertexSource, fragmentSource);
+    m_id=GLHelper::createShaderProgram(vertexSource, fragmentSource);
     //GLuint vertexShader=
     /* glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader,1,&vertexSource,nullptr);
@@ -123,7 +123,7 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
 }
 void Shader::use()
 {
-    glUseProgram(ID);
+    glUseProgram(m_id);
 }
 void Shader::setVec4(
     const std::string& name,
@@ -133,19 +133,19 @@ void Shader::setVec4(
     float w
 )
 {
-    GLint location=glGetUniformLocation(ID,name.c_str());
+    GLint location=glGetUniformLocation(m_id,name.c_str());
     if(location== -1){
         std::cerr<<"uniform not found: "<<name <<'\n';
         return;
     }
     glUniform4f(location,x,y,z,w);
 }
-GLuint Shader::getID() const{
-    return ID;
+GLuint Shader::getId() const{
+    return m_id;
 }
 Shader::~Shader()
 {
-    if(ID!=0){
-        glDeleteProgram(ID);
+    if(m_id!=0){
+        glDeleteProgram(m_id);
     }
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../dependencies/include/glad/gl.h"
+#include <glad/gl.h>
 #include <string_view>
 #include <iostream>
 

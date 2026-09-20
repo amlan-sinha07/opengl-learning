@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../dependencies/include/glad/gl.h"
 #define GLFW_INCLUDE_NONE
-#include "GLFW/glfw3.h"
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 #include <cstddef>
 #include <array>
 #include <string_view>

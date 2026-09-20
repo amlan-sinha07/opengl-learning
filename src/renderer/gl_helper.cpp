@@ -17,7 +17,9 @@ namespace GLHelper {
     }
 
     void setVertexBufferData(GLuint id, const void* data, size_t size, GLenum usage){
-        glBufferData(id, static_cast<GLsizeiptr>(size), data, GL_ARRAY_BUFFER);
+        glBindBuffer(GL_ARRAY_BUFFER, id);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(size), data, usage);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
 

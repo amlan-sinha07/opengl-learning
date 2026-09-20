@@ -1,39 +1,17 @@
-<<<<<<< HEAD
 # Build output
 bin/
+obj/
 *.exe
 *.o
+*.out
+*.app
 
-# VS Code
-.vscode/
-
-# Temporary files
-*.log
-*.tmp
-
-# Windows
-Thumbs.db
-Desktop.ini
-
-*.txt
-*.html
-doc/
-dependencies/
-obj/
-build.bat
-makefile
-scene.hpp
-shaders/fragment.glsl
-shaders/vertex.glsl
-src/gl.c
-=======
 # Prerequisites
 *.d
 
 # Compiled Object files
 *.slo
 *.lo
-*.o
 *.obj
 
 # Precompiled Headers
@@ -52,7 +30,6 @@ src/gl.c
 *.dll
 *.so.*
 
-
 # Fortran module files
 *.mod
 *.smod
@@ -62,11 +39,6 @@ src/gl.c
 *.la
 *.a
 *.lib
-
-# Executables
-*.exe
-*.out
-*.app
 
 # Build directories
 build/
@@ -78,6 +50,7 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
+makefile
 install_manifest.txt
 compile_commands.json
 
@@ -96,4 +69,25 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
->>>>>>> 37fa4887abb423c43226724deda0acd1beeff0fc
+
+# Vendored dependencies
+dependencies/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Local build scripts and scratch
+build.bat
+doc/
+scene.hpp
+shaders/fragment.glsl
+shaders/vertex.glsl
+src/gl.c
+
+# Catch-all text/html from the original project
+*.txt
+*.html
