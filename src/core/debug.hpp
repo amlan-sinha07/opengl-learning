@@ -2,13 +2,13 @@
 
 #include <glad/gl.h>
 #include <string_view>
-#include <iostream>
+#include <cassert>
 
 class GLErrorHandler {
     public:
     GLErrorHandler() = delete;
     
-    static void init();
+    [[nodiscard]] static auto init() -> bool;
 
     static void clearErrors();
     [[nodiscard]] static auto checkErrors(std::string_view expr, std::string_view file, int line) ->bool;
@@ -24,23 +24,10 @@ class GLErrorHandler {
         const void* userParam
     );
 };
-//Windows MSVC present
-#if defined(_MSC_VER)
-    #define GL_BREAK() __debugbreak()
-#elif defined(__GNUC__) || defined(__clang__)
-    #define GL_BREAK() __builtin_trap()
-#else
-    #define GL_BREAK() ((void)0)
-#endif
- 
-#ifdef NDEBUG
-    #define GL_CALL(expr) expr
-#else
-    #define GL_CALL(expr) \
-        do { \
-            GLErrorHandler::clearErrors(); \
-            expr; \
-            if (!GLErrorHandler::checkErrors(#expr, __FILE__, __LINE__)) { \
-            } \
-        } while (0)
-#endif
+// got tired of GL_CALL breaking
+#define GL_SWEEP(label)                                                                          \
+    do {                                                                                         \
+        [[maybe_unused]] const bool ok = GLErrorHandler::checkErrors(label, __FILE__, __LINE__); \
+        assert(ok);                                                                              \
+        GLErrorHandler::clearErrors();                                                           \
+    } while (0)

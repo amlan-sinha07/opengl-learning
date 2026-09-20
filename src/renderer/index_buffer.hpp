@@ -1,9 +1,9 @@
 #pragma once
-
+#include <glad/gl.h>
 class IndexBuffer{
     private:
-    unsigned int m_id;
-    unsigned int m_count;
+    GLuint m_id{0};
+    GLuint m_count{0};
     public:
     IndexBuffer(const unsigned int* data,
                 unsigned int count);
@@ -12,6 +12,7 @@ class IndexBuffer{
     void bind() const;
     void unbind() const;
 
-    unsigned int getCount() const;
+    GLuint getId() const;
+    GLuint getCount() const;
 
 };
