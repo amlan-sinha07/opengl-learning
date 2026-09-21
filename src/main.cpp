@@ -102,9 +102,7 @@ int main()
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Error: "
-                  << e.what()
-                  << '\n';
+        KERROR("Error: %s", e.what());
 
         return 1;
     }

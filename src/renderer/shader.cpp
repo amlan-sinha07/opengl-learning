@@ -1,8 +1,8 @@
 #include "shader.hpp"
 #include "gl_helper.hpp"
+#include "../core/logger.hpp"
 #include <fstream>
 #include <sstream>
-#include <iostream>
 
 Shader::Shader(const char* vertexPath,const char* fragmentPath){
     //-------------------------
@@ -14,8 +14,7 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     vertexFile.open(vertexPath);
 
     if( !vertexFile.is_open()){
-        std::cerr<<"Could not open shader !! "
-                <<vertexPath<<"\n";
+        KERROR("Could not open shader file: %s", vertexPath);
         m_id=0;
         return;
     }
@@ -34,8 +33,7 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     fragmentFile.open(fragmentPath);
 
     if( !fragmentFile.is_open()){
-        std::cerr<<"Could not open fragment shader !! "
-                <<fragmentPath<<"\n";
+        KERROR("Could not open fragment shader file: %s", fragmentPath);
         m_id=0;
         return;
     }
@@ -135,7 +133,7 @@ void Shader::setVec4(
 {
     GLint location=glGetUniformLocation(m_id,name.c_str());
     if(location== -1){
-        std::cerr<<"uniform not found: "<<name <<'\n';
+        KWARN("Uniform not found: %s", name.c_str());
         return;
     }
     glUniform4f(location,x,y,z,w);

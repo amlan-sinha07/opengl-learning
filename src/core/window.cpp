@@ -1,8 +1,7 @@
 #include <glad/gl.h>
 
 #include "window.hpp"
-
-#include <iostream>
+#include "logger.hpp"
 
 void Window::framebufferSizeCallback(
     GLFWwindow* window,
@@ -24,7 +23,7 @@ void Window::framebufferSizeCallback(
 }
 void Window::glfwErrorCallback(int error, const char* description)
 {
-    std::cerr << "[GLFW Error] (" << error << ") " << description << '\n';
+    KERROR("[GLFW Error] (%d) %s", error, description);
 }
 
 Window::Window(
@@ -40,7 +39,7 @@ Window::Window(
     // ----------------
     if (!glfwInit())
     {
-        std::cerr << "GLFW initialization failed\n";
+        KERROR("GLFW initialization failed");
         return;
     }
 
@@ -73,7 +72,7 @@ Window::Window(
 
     if (!m_window)
     {
-        std::cerr << "Window creation failed\n";
+        KERROR("Window creation failed");
         glfwTerminate();
         return;
     }
@@ -89,7 +88,7 @@ Window::Window(
     if (!gladLoadGL(
             (GLADloadfunc)glfwGetProcAddress))
     {
-        std::cerr << "GLAD initialization failed\n";
+        KERROR("GLAD initialization failed");
 
         glfwDestroyWindow(m_window);
         glfwTerminate();
