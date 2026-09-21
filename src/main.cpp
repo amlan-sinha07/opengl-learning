@@ -13,8 +13,46 @@
 #include <vector>
 #include <exception>
 
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+
 int main()
 {
+    glm::vec4 vec(1.0f,0.0f,0.0f,1.0f);
+    glm::mat4 trans= glm::mat4(1.0f);
+    glm::mat4 trans1 = glm::translate(trans,glm::vec3(1.0f,1.0f,0.0f));
+    vec = trans1*vec;
+    std::cout 
+    << vec.x << " "
+    << vec.y << " "
+    << vec.z << " "
+    << vec.w << " "
+    << std::endl;
+    glm::mat4 trans2 = glm::rotate(
+        trans,
+        glm::radians(90.0f),
+        glm::vec3(0.0f,0.0f,1.0f)
+    );
+    vec = trans2 * vec;
+    std::cout
+    << vec.x << " "
+    << vec.y << " "
+    << vec.z << " "
+    << vec.w << " "
+    << std::endl;
+    glm::mat4 trans3 = glm::scale(
+        trans,
+        glm::vec3(0.5f,0.5f,0.5f)
+    );
+    vec =trans3 *vec;
+    std::cout 
+    << vec.x << " "
+    << vec.y << " "
+    << vec.z << " "
+    << vec.w << " "
+    << std::endl;
+
     try
     {
         Window window(800, 600, "OpenGL Learning Project");
