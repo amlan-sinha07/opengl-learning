@@ -1,5 +1,5 @@
 #include "gl_helper.hpp"
-#include <iostream>
+#include "../core/logger.hpp"
 
 namespace GLHelper {
 
@@ -78,7 +78,8 @@ namespace GLHelper {
         if (success == GL_FALSE) {
             char infoLog[512];
             glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-            std::cerr << "Shader compilation error (" << (type == GL_VERTEX_SHADER ? "Vertex" : "Fragment") << "):\n" << infoLog << '\n';
+            KERROR("Shader compilation error (%s):\n%s",
+                   type == GL_VERTEX_SHADER ? "Vertex" : "Fragment", infoLog);
         }
         return shader;
     }
@@ -97,7 +98,7 @@ namespace GLHelper {
         if (success == GL_FALSE) {
             char infoLog[512];
             glGetProgramInfoLog(program, 512, nullptr, infoLog);
-            std::cerr << "Shader program link error:\n" << infoLog << '\n';
+            KERROR("Shader program link error:\n%s", infoLog);
         }
 
         glDeleteShader(vert);
