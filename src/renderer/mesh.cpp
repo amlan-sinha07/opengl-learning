@@ -35,9 +35,9 @@ Mesh::Mesh(
     }
 
     BufferLayout layout{
-        {"a_Position", GL_FLOAT, 3, GL_FALSE},
-        {"a_Normal",   GL_FLOAT, 3, GL_FALSE},
-        {"a_UV",       GL_FLOAT, 2, GL_FALSE}
+        {"v3_Position", GL_FLOAT, 3, GL_FALSE},
+        {"v3_Normal",   GL_FLOAT, 3, GL_FALSE},
+        {"v3_UV",       GL_FLOAT, 2, GL_FALSE}
     };
 
     m_vao.bind();

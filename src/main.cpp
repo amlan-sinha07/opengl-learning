@@ -21,37 +21,18 @@ int main()
 {
     glm::vec4 vec(1.0f,0.0f,0.0f,1.0f);
     glm::mat4 trans= glm::mat4(1.0f);
-    glm::mat4 trans1 = glm::translate(trans,glm::vec3(1.0f,1.0f,0.0f));
-    vec = trans1*vec;
-    std::cout 
-    << vec.x << " "
-    << vec.y << " "
-    << vec.z << " "
-    << vec.w << " "
-    << std::endl;
-    glm::mat4 trans2 = glm::rotate(
+    trans = glm::translate(trans,glm::vec3(1.0f,1.0f,0.0f));
+    trans = glm::rotate(
         trans,
         glm::radians(90.0f),
-        glm::vec3(0.0f,0.0f,1.0f)
+        glm::vec3(0.0,0.0,1.0)
     );
-    vec = trans2 * vec;
-    std::cout
-    << vec.x << " "
-    << vec.y << " "
-    << vec.z << " "
-    << vec.w << " "
-    << std::endl;
-    glm::mat4 trans3 = glm::scale(
+    trans = glm::scale(
         trans,
-        glm::vec3(0.5f,0.5f,0.5f)
+        glm::vec3(0.5,0.5,0.5)
     );
-    vec =trans3 *vec;
-    std::cout 
-    << vec.x << " "
-    << vec.y << " "
-    << vec.z << " "
-    << vec.w << " "
-    << std::endl;
+    vec = vec * trans ;
+    std::cout << vec.x <<"\t"<<vec.y <<"\t"<< vec.z<<"\t" << vec.w <<std::endl;
 
     try
     {
