@@ -1,7 +1,7 @@
 #include <glad/gl.h>
 
 #include "window.hpp"
-#include "logger.hpp"
+#include "../core/logging/logger.hpp"
 
 void Window::framebufferSizeCallback(
     GLFWwindow* window,

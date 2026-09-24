@@ -1,5 +1,5 @@
 #include "vertex_array.hpp"
-#include "gl_helper.hpp"
+#include "../rendering/gl_helper.hpp"
 #include <utility>
 
 VertexArray::VertexArray() : m_id(GLHelper::createVertexArray()) {}

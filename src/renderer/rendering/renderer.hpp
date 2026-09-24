@@ -1,8 +1,8 @@
 #pragma once
 #pragma once
 
-#include "mesh.hpp"
-#include "shader.hpp"
+#include "../mesh/mesh.hpp"
+#include "../shader/shader.hpp"
 
 class Renderer {
 public:

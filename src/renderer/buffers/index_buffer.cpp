@@ -1,5 +1,5 @@
 #include "index_buffer.hpp"
-#include "gl_helper.hpp"
+#include "../rendering/gl_helper.hpp"
 #include <stdexcept>
 
 IndexBuffer::IndexBuffer(

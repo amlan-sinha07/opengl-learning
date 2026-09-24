@@ -1,5 +1,5 @@
 #include "vertex_buffer.hpp"
-#include "gl_helper.hpp"
+#include "../rendering/gl_helper.hpp"
 
 VertexBuffer::VertexBuffer(
     const void* data,
