@@ -1,13 +1,13 @@
 #include <glad/gl.h>
 
-#include "core/window.hpp"
-#include "core/debug.hpp"
-#include "core/logger.hpp"
+#include "platform/window.hpp"
+#include "core/debugging/debug.hpp"
+#include "core/logging/logger.hpp"
 
-#include "renderer/shader.hpp"
-#include "renderer/vertex.hpp"
-#include "renderer/mesh.hpp"
-#include "renderer/renderer.hpp"
+#include "renderer/shader/shader.hpp"
+#include "renderer/mesh/vertex.hpp"
+#include "renderer/mesh/mesh.hpp"
+#include "renderer/rendering/renderer.hpp"
 
 #include <iostream>
 #include <vector>

@@ -6,7 +6,7 @@
 #include <cstddef>
 #include <array>
 #include <string_view>
-#include "buffer_layout.hpp"
+#include "../buffers/buffer_layout.hpp"
 
 
 namespace GLHelper

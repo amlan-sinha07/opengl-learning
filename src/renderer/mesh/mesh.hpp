@@ -5,10 +5,10 @@
 #include <vector>
 
 #include "vertex.hpp"
-#include "vertex_buffer.hpp"
-#include "vertex_array.hpp"
-#include "index_buffer.hpp"
-#include "buffer_layout.hpp"
+#include "../buffers/vertex_buffer.hpp"
+#include "../buffers/vertex_array.hpp"
+#include "../buffers/index_buffer.hpp"
+#include "../buffers/buffer_layout.hpp"
 
 class Mesh {
 private:

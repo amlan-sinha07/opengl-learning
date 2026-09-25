@@ -1,5 +1,5 @@
 #include "gl_helper.hpp"
-#include "../core/logger.hpp"
+#include "../../core/logging/logger.hpp"
 
 namespace GLHelper {
 

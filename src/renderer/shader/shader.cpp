@@ -1,6 +1,6 @@
 #include "shader.hpp"
-#include "gl_helper.hpp"
-#include "../core/logger.hpp"
+#include "../rendering/gl_helper.hpp"
+#include "../../core/logging/logger.hpp"
 #include <fstream>
 #include <sstream>
 
