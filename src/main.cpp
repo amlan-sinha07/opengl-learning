@@ -21,18 +21,25 @@ int main()
 {
     glm::vec4 vec(1.0f,0.0f,0.0f,1.0f);
     glm::mat4 trans= glm::mat4(1.0f);
-    trans = glm::translate(trans,glm::vec3(1.0f,1.0f,0.0f));
+    trans = glm::translate(
+        trans,
+        glm::vec3(1.0f,1.0f,0.0f)
+    );
     trans = glm::rotate(
         trans,
         glm::radians(90.0f),
-        glm::vec3(0.0,0.0,1.0)
+        glm::vec3(0.0f,0.0f,1.0f)
     );
     trans = glm::scale(
         trans,
-        glm::vec3(0.5,0.5,0.5)
+        glm::vec3(0.5f,0.5f,0.5f)
     );
     vec = vec * trans ;
-    std::cout << vec.x <<"\t"<<vec.y <<"\t"<< vec.z<<"\t" << vec.w <<std::endl;
+    std::cout 
+        << vec.x <<"\t"
+        << vec.y <<"\t"
+        << vec.z <<"\t" 
+        << vec.w <<std::endl;
 
     try
     {
@@ -45,21 +52,25 @@ int main()
         );
 
         std::vector<Vertex> vertices{
-{ -0.5f, -0.5f, 0.0f,
-   1.0f, 0.0f, 0.0f,   // red
-   0.0f, 0.0f },
+            { -0.5f, -0.5f, 0.0f,
+                1.0f, 0.0f, 0.0f,   // red
+                0.0f, 0.0f 
+            },
 
-{  0.5f, -0.5f, 0.0f,
-   0.0f, 1.0f, 0.0f,   // green
-   1.0f, 0.0f },
+            {  0.5f, -0.5f, 0.0f,
+                0.0f, 1.0f, 0.0f,   // green
+                1.0f, 0.0f 
+            },
 
-{  0.5f,  0.5f, 0.0f,
-   0.0f, 0.0f, 1.0f,   // blue
-   1.0f, 1.0f },
+            {  0.5f,  0.5f, 0.0f,
+                0.0f, 0.0f, 1.0f,   // blue
+                1.0f, 1.0f 
+            },
 
-{ -0.5f,  0.5f, 0.0f,
-   1.0f, 1.0f, 0.0f,   // yellow
-   0.0f, 1.0f }
+            { -0.5f,  0.5f, 0.0f,
+                1.0f, 1.0f, 0.0f,   // yellow
+                0.0f, 1.0f 
+            }
         };
 
         std::vector<unsigned int> indices{
@@ -70,6 +81,8 @@ int main()
         Mesh rectangle(vertices, indices);
 
         Renderer renderer;
+
+        
 
         while (!window.shouldClose())
         {
