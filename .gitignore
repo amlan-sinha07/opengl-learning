@@ -87,6 +87,7 @@ scene.hpp
 shaders/fragment.glsl
 shaders/vertex.glsl
 src/gl.c
+.power_builder.conf
 
 # Catch-all text/html from the original project
 *.txt
