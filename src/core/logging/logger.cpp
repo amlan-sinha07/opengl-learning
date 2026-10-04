@@ -3,11 +3,9 @@
 #include <array>
 #include <cstdarg>
 #include <cstdio>
+#include <print>
 #include <string_view>
 
-// anon namespace will hold max buffer size = 1024? or 4096?
-// level -> string function
-// ar ki?
 namespace {
     constexpr std::size_t LOG_BUFFER_SIZE = 1024;
 
@@ -37,7 +35,7 @@ void Log::setLevel(Log::Level level) {
     currentLevel = static_cast<int>(level);
 }
 
-void Log::output(Log::Level level, const char *fmt, ...) {
+void Log::output(Log::Level level, const char* file, int line, const char* fmt, ...) {
     if (static_cast<int>(level) > currentLevel) {
         return;
     }
@@ -49,5 +47,12 @@ void Log::output(Log::Level level, const char *fmt, ...) {
     std::vsnprintf(message.data(), message.size(), fmt, args);
     va_end(args);
 
-    std::fprintf(stderr, "[%s] %s\n", levelToString(level).data(), message.data());
+    std::println(
+        stderr,
+        "[{}] {}:{}: {}",
+        levelToString(level).data(),
+        file != nullptr ? file : "<unknown>",
+        line,
+        message.data()
+    );
 }

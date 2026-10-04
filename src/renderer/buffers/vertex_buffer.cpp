@@ -48,12 +48,12 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
 
 void VertexBuffer::bind() const
 {
-    glBindBuffer(GL_ARRAY_BUFFER, m_id);
+    GLHelper::bindBuffer(TARGET, m_id);
 }
 
 void VertexBuffer::unbind() const
 {
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    GLHelper::bindBuffer(TARGET, 0);
 }
 
 void VertexBuffer::update(
@@ -61,7 +61,7 @@ void VertexBuffer::update(
     GLsizeiptr size
 )
 {
-    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+    GLHelper::updateBufferSubData(TARGET, m_id, 0, size, data);
 }
 
 GLuint VertexBuffer::getId() const

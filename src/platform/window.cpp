@@ -9,6 +9,7 @@ void Window::framebufferSizeCallback(
     int height)
 {
     glViewport(0, 0, width, height);
+    KINFO("Framebuffer resized: %dx%d", width, height);
 
     Window* self =
         static_cast<Window*>(
@@ -42,6 +43,8 @@ Window::Window(
         KERROR("GLFW initialization failed");
         return;
     }
+
+    KINFO("GLFW initialized");
 
     // ----------------
     // OpenGL version
@@ -77,10 +80,13 @@ Window::Window(
         return;
     }
 
+    KINFO("Window created: %dx%d", m_width, m_height);
+
     // ----------------
     // Make OpenGL context current
     // ----------------
     glfwMakeContextCurrent(m_window);
+    KINFO("OpenGL context is current");
 
     // ----------------
     // Initialize GLAD
@@ -97,6 +103,8 @@ Window::Window(
 
         return;
     }
+
+    KINFO("GLAD initialized");
 
     // ----------------
     // Initial framebuffer size
@@ -137,6 +145,8 @@ Window::Window(
 
 Window::~Window()
 {
+    KINFO("Destroying window");
+
     if (m_window)
     {
         glfwDestroyWindow(m_window);
