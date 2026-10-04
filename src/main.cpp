@@ -12,91 +12,91 @@
 #include <iostream>
 #include <vector>
 #include <exception>
+#include <cmath>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include "math/vector3.hpp"
 
-int main()
+auto main() -> int
 {
-    glm::vec4 vec(1.0f,0.0f,0.0f,1.0f);
-    glm::mat4 trans= glm::mat4(1.0f);
-    trans = glm::translate(
-        trans,
-        glm::vec3(1.0f,1.0f,0.0f)
-    );
-    trans = glm::rotate(
-        trans,
-        glm::radians(90.0f),
-        glm::vec3(0.0f,0.0f,1.0f)
-    );
-    trans = glm::scale(
-        trans,
-        glm::vec3(0.5f,0.5f,0.5f)
-    );
-    vec = vec * trans ;
-    std::cout 
-        << vec.x <<"\t"
-        << vec.y <<"\t"
-        << vec.z <<"\t" 
-        << vec.w <<std::endl;
+#ifdef NDEBUG
+    Log::setLevel(Log::Level::Info);
+#else
+    Log::setLevel(Log::Level::Debug);
+#endif
+
+    KINFO("Starting OpenGL Learning");
+
+    Vector3 Vec3{1.0F, 0.0F, 0.0F};
+    std::cout << Vec3 <<'\n';
 
     try
     {
-        Window window(800, 600, "OpenGL Learning Project");
+        Window Window(800, 600, "OpenGL Learning Project");
+        KINFO("Window and OpenGL context initialized");
 
-        KINFO("Opengl Initialized");
-        Shader shader(
-            "shaders/vertex.glsl",
-            "shaders/fragment.glsl"
+        Shader Shader(
+            "shaders/vertex.vert",
+            "shaders/fragment.frag"
         );
 
-        std::vector<Vertex> vertices{
-            { -0.5f, -0.5f, 0.0f,
-                1.0f, 0.0f, 0.0f,   // red
-                0.0f, 0.0f 
-            },
+        if (Shader.getId() == 0)
+        {
+            KERROR("Shader program initialization failed");
+            return 1;
+        }
 
-            {  0.5f, -0.5f, 0.0f,
-                0.0f, 1.0f, 0.0f,   // green
-                1.0f, 0.0f 
-            },
+        KINFO("Shader program initialized");
 
-            {  0.5f,  0.5f, 0.0f,
-                0.0f, 0.0f, 1.0f,   // blue
-                1.0f, 1.0f 
-            },
-
-            { -0.5f,  0.5f, 0.0f,
-                1.0f, 1.0f, 0.0f,   // yellow
-                0.0f, 1.0f 
-            }
+        std::vector<Vertex> Vertices{
+            { {-0.5F, -0.5F, 0.0F}, {1.0F, 0.0F, 0.0F} },   // red
+            { { 0.5F, -0.5F, 0.0F}, {0.0F, 1.0F, 0.0F} },   // green
+            { { 0.5F,  0.5F, 0.0F}, {0.0F, 0.0F, 1.0F} },   // blue
+            { {-0.5F,  0.5F, 0.0F}, {1.0F, 1.0F, 0.0F} },   // yellow
         };
 
-        std::vector<unsigned int> indices{
+        std::vector<unsigned int> Indices{
             0, 1, 2,
             2, 3, 0
         };
 
-        Mesh rectangle(vertices, indices);
+        KINFO("Creating demo mesh");
+        Mesh Rectangle(Vertices, Indices);
+        Renderer Renderer;
+        KINFO("Renderer initialized");
 
-        Renderer renderer;
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        
+        Vector3 baseScale{1.0F, 1.0F, 1.0F};
+        Vector3 pulseScale{1.5F, 1.5F, 1.5F};
+        float time = 0.0F;
 
-        while (!window.shouldClose())
+        while (!Window.shouldClose())
         {
-            renderer.clear();
+            time += 0.016F;
+            float pulse = (std::sin(time) + 1.0F) * 0.5F;
+            Vector3 currentScale = baseScale.lerp(pulseScale, pulse);
 
-            renderer.draw(rectangle, shader);
+            std::vector<Vertex> animatedVertices;
+            animatedVertices.reserve(Vertices.size());
+            for (const auto& v : Vertices)
+            {
+                animatedVertices.push_back({v.position * currentScale, v.color});
+            }
 
-            window.swapBuffers();
-            window.pollEvents();
+            Rectangle.updateVertices(animatedVertices);
+
+            Renderer.clear();
+            Renderer.draw(Rectangle, Shader);
+
+            Window.swapBuffers();
+            Window.pollEvents();
         }
+
+        KINFO("Application stopped");
     }
-    catch (const std::exception& e)
+    catch (const std::exception& Err)
     {
-        KERROR("Error: %s", e.what());
+        KERROR("Error: %s", Err.what());
 
         return 1;
     }

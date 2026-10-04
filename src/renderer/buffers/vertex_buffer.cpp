@@ -1,14 +1,20 @@
 #include "vertex_buffer.hpp"
 #include "../rendering/gl_helper.hpp"
 
+namespace {
+    constexpr GLenum TARGET = GL_ARRAY_BUFFER;
+}
+
 VertexBuffer::VertexBuffer(
     const void* data,
     GLsizeiptr size,
     GLenum usage
 )
     : m_id(
-        GLHelper::createAndUploadBuffer(GL_ARRAY_BUFFER, size, data, usage)
-    ){
+        GLHelper::createAndUploadBuffer(TARGET, size, data, usage)
+    ),
+      m_size(size)
+    {
     }
 
 VertexBuffer::~VertexBuffer()
@@ -48,6 +54,14 @@ void VertexBuffer::bind() const
 void VertexBuffer::unbind() const
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void VertexBuffer::update(
+    const void* data,
+    GLsizeiptr size
+)
+{
+    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 }
 
 GLuint VertexBuffer::getId() const
