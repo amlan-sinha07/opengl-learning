@@ -84,10 +84,9 @@ Desktop.ini
 build.bat
 doc/
 scene.hpp
-shaders/fragment.glsl
-shaders/vertex.glsl
 src/gl.c
 .power_builder.conf
+LEARNING.md
 
 # Catch-all text/html from the original project
 *.txt

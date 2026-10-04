@@ -6,8 +6,8 @@
 class VertexBuffer
 {
 private:
-    GLuint m_id;
-    GLsizeiptr m_size;
+    GLuint m_id{0};
+    GLsizeiptr m_size{0};
 
 public:
     VertexBuffer(const void* data, GLsizeiptr size,
@@ -23,6 +23,7 @@ public:
 
     void bind() const;
     void unbind() const;
+    void update(const void* data, GLsizeiptr size);
 
     GLuint getId() const;
     GLsizeiptr getSize() const;
