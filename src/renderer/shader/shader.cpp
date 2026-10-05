@@ -14,10 +14,12 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     vertexFile.open(vertexPath);
 
     if( !vertexFile.is_open()){
-        KERROR("Could not open shader file: %s", vertexPath);
+        KERROR("Could not open vertex shader file: %s", vertexPath);
         m_id=0;
         return;
     }
+
+    KDEBUG("Loaded vertex shader: %s", vertexPath);
     std::stringstream vertexStream;
     vertexStream<<vertexFile.rdbuf();
     vertexFile.close();
@@ -37,6 +39,8 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
         m_id=0;
         return;
     }
+
+    KDEBUG("Loaded fragment shader: %s", fragmentPath);
     std::stringstream fragmentStream;
     fragmentStream<<fragmentFile.rdbuf();
     fragmentFile.close();
@@ -46,11 +50,17 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     const char* vertexSource=vertexCode.c_str();
     const char* fragmentSource=fragmentCode.c_str();
 
+    KDEBUG("Creating shader program");
 
     //-----------------------------------
     //CREATE VERTEX SHADER
     //-----------------------------------
     m_id=GLHelper::createShaderProgram(vertexSource, fragmentSource);
+
+    if (m_id == 0)
+    {
+        KERROR("Shader program creation failed");
+    }
     //GLuint vertexShader=
     /* glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader,1,&vertexSource,nullptr);
@@ -121,6 +131,7 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
 }
 void Shader::use()
 {
+    KASSERT(m_id != 0, "Shader program is not initialized");
     glUseProgram(m_id);
 }
 void Shader::setVec4(

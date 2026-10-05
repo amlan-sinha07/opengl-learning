@@ -36,6 +36,7 @@ public:
 
     void bind() const;
     void unbind() const;
+    void updateVertices(const std::vector<Vertex>& vertices);
 
     GLuint getVAO() const;
     GLuint getEBO() const;

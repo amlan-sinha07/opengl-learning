@@ -16,7 +16,7 @@ Application::~Application()
     if (m_window){
         glfwDestroyWindow(m_window);
     }
-    glfwTerminate;
+    glfwTerminate();
 }
 void Application::init()
 {
