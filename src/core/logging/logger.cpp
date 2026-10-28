@@ -1,14 +1,8 @@
 #include "logger.hpp"
 
-#include <array>
-#include <cstdarg>
-#include <cstdio>
 #include <print>
-#include <string_view>
 
 namespace {
-    constexpr std::size_t LOG_BUFFER_SIZE = 1024;
-
     [[nodiscard]]
     auto levelToString(Log::Level level) -> std::string_view {
         switch (level) {
@@ -31,28 +25,18 @@ namespace {
     int currentLevel{static_cast<int>(Log::Level::Info)};
 }
 
-void Log::setLevel(Log::Level level) {
+bool Log::isEnabled(Level level) {
+    return static_cast<int>(level) <= currentLevel;
+}
+
+void Log::setLevel(Level level) {
     currentLevel = static_cast<int>(level);
 }
 
-void Log::output(Log::Level level, const char* file, int line, const char* fmt, ...) {
-    if (static_cast<int>(level) > currentLevel) {
-        return;
-    }
-
-    std::array<char, LOG_BUFFER_SIZE> message{};
-
-    va_list args;
-    va_start(args, fmt);
-    std::vsnprintf(message.data(), message.size(), fmt, args);
-    va_end(args);
-
-    std::println(
-        stderr,
-        "[{}] {}:{}: {}",
-        levelToString(level).data(),
-        file != nullptr ? file : "<unknown>",
-        line,
-        message.data()
-    );
+void Log::write(Level level, const char* file, int line, std::string_view message) {
+    std::println(stderr, "[{}] {}:{}: {}",
+                 levelToString(level),
+                 file != nullptr ? file : "<unknown>",
+                 line,
+                 message);
 }

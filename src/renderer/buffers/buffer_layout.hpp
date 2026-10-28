@@ -37,12 +37,22 @@ struct BufferElement {
     [[nodiscard]] auto getSize() const -> GLuint { return getTypeSize(type) * count; }
 };
 
+// Pairs a shader attribute name with a struct field. Going through a function
+// call (rather than a braced pair) is what lets the types be deduced.
+template <typename T, typename Class>
+[[nodiscard]] constexpr auto attribute(const char *name, T Class::*member) {
+    return std::pair{name, member};
+}
+
 class BufferLayout {
 public:
     BufferLayout() = default;
-    BufferLayout(std::initializer_list<BufferElement> elements) : elements_(elements) {
-        calculateOffsetsAndStride();
-    }
+
+    // Builds the layout from member pointers, so names, types and offsets come from
+    // the struct itself. A misspelled field is a compile error, not wrong bytes.
+    // Component count is derived from the member type: 3 for glm::vec3, 4 for
+    // glm::vec4, and so on.
+    template <typename... Pairs> explicit BufferLayout(Pairs... pairs) { (appendOne(pairs), ...);}
 
     [[nodiscard]] auto getStride() const -> GLsizei { return stride_; }
     [[nodiscard]] auto getElements() const -> const std::vector<BufferElement> & {
@@ -58,13 +68,13 @@ private:
     std::vector<BufferElement> elements_;
     GLsizei stride_{0};
 
-    void calculateOffsetsAndStride() {
-        size_t offset = 0;
-        stride_ = 0;
-        for (auto &element : elements_) {
-            element.offset = offset;
-            offset += element.getSize();
-            stride_ += static_cast<GLsizei>(element.getSize());
-        }
+    template <typename T, typename Class> void appendOne(std::pair<const char *, T Class::*> pair) {
+        static_assert(sizeof(T) % sizeof(float) == 0,
+                      "attribute type must be a whole number of floats");
+        BufferElement element{pair.first, GL_FLOAT, static_cast<GLuint>(sizeof(T) / sizeof(float)),
+                              GL_FALSE};
+        element.offset = static_cast<size_t>(stride_);
+        stride_ += static_cast<GLsizei>(element.getSize());
+        elements_.push_back(std::move(element));
     }
 };

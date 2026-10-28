@@ -6,6 +6,9 @@
 #pragma once
 
 #include <cassert>
+#include <format>
+#include <string>
+#include <string_view>
 
 // SUCH LOGS CAN BE DISABLED
 #define LOG_WARN_ENABLED 1
@@ -41,8 +44,19 @@ namespace Log {
 
     //! not thread safe
     //todo make thread safe
-    void output(Level level, const char* file, int line, const char* fmt, ...);
+    [[nodiscard]] bool isEnabled(Level level);
     void setLevel(Level level);
+    void write(Level level, const char* file, int line, std::string_view message);
+
+    template <typename... Args>
+    void output(Level level, const char* file, int line,
+                std::format_string<Args...> fmt, Args&&... args) {
+        if (!isEnabled(level)) {
+            return;
+        }
+        write(level, file, line,
+              std::vformat(fmt.get(), std::make_format_args(args...)));
+    }
 }
 
 //? macros for LOG calling
@@ -76,10 +90,10 @@ namespace Log {
 #endif
 
 #define KASSERT(condition, message) \
-    do { \
+    { \
         const bool condition_result = static_cast<bool>(condition); \
         if (!condition_result) { \
-            KERROR("Assertion failed: %s -- %s", #condition, message); \
+            KERROR("Assertion failed: {} -- {}", #condition, message); \
         } \
         assert(condition_result); \
-    } while (false)
+    }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glad/gl.h>
+#include <glm/glm.hpp>
 
 #include <vector>
 
@@ -18,25 +19,22 @@ private:
     GLenum m_primitiveMode;
 
 public:
-    Mesh(
-        const std::vector<Vertex>& vertices,
-        const std::vector<unsigned int>& indices,
-        GLenum primitiveMode = GL_TRIANGLES
-    );
+    Mesh(const std::vector<MeshVertex> &vertices, const std::vector<unsigned int> &indices,
+         GLenum primitiveMode = GL_TRIANGLES);
 
     ~Mesh() = default;
 
     // No copying
-    Mesh(const Mesh&) = delete;
-    Mesh& operator=(const Mesh&) = delete;
+    Mesh(const Mesh &) = delete;
+    Mesh &operator=(const Mesh &) = delete;
 
     // Moving allowed
-    Mesh(Mesh&&) noexcept = default;
-    Mesh& operator=(Mesh&&) noexcept = default;
+    Mesh(Mesh &&) noexcept = default;
+    Mesh &operator=(Mesh &&) noexcept = default;
 
     void bind() const;
     void unbind() const;
-    void updateVertices(const std::vector<Vertex>& vertices);
+    void updateVertices(const std::vector<MeshVertex> &vertices);
 
     GLuint getVAO() const;
     GLuint getEBO() const;

@@ -10,7 +10,7 @@ auto createAndUploadBuffer(GLenum target, size_t sizeBytes, const void *data, GL
     glBindBuffer(target, id);
     glBufferData(target, static_cast<GLsizeiptr>(sizeBytes), data, usage);
     glBindBuffer(target, 0);
-    KDEBUG("Created buffer %u (%zu bytes)", id, sizeBytes);
+    KDEBUG("Created buffer {} ({} bytes)", id, sizeBytes);
     return id;
 }
 
@@ -33,7 +33,7 @@ void destroyBuffer(GLuint bufferId) {
 auto createVertexArray() -> GLuint {
     GLuint id{0};
     glGenVertexArrays(1, &id);
-    KDEBUG("Created vertex array %u", id);
+    KDEBUG("Created vertex array {}", id);
     return id;
 }
 
@@ -55,7 +55,7 @@ void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout &layout, [
     bindBuffer(GL_ARRAY_BUFFER, vboId);
 
     for (const auto &Element : layout.getElements()) {
-        KDEBUG("loop used for %s", Element.name.c_str());
+        KDEBUG("loop used for {}", Element.name);
 
         glEnableVertexAttribArray(startingAttribIndex);
         // stride  = bytes between consecutive vertices
@@ -104,10 +104,10 @@ static auto compileSingleShader(GLenum type, std::string_view source) -> GLuint 
     if (success == GL_FALSE) {
         char infoLog[512];
         glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        KERROR("Shader compilation error (%s):\n%s",
+        KERROR("Shader compilation error ({}):\n{}",
                type == GL_VERTEX_SHADER ? "Vertex" : "Fragment", infoLog);
     } else {
-        KDEBUG("Compiled %s shader", type == GL_VERTEX_SHADER ? "Vertex" : "Fragment");
+        KDEBUG("Compiled {} shader", type == GL_VERTEX_SHADER ? "Vertex" : "Fragment");
     }
     return shader;
 }
@@ -126,7 +126,7 @@ auto createShaderProgram(std::string_view vertexSrc, std::string_view fragmentSr
     if (success == GL_FALSE) {
         char infoLog[512];
         glGetProgramInfoLog(program, 512, nullptr, infoLog);
-        KERROR("Shader program link error:\n%s", infoLog);
+        KERROR("Shader program link error:\n{}", infoLog);
     } else {
         KINFO("Shader program linked");
     }
