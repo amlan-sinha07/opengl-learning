@@ -9,7 +9,7 @@ void Window::framebufferSizeCallback(
     int height)
 {
     glViewport(0, 0, width, height);
-    KINFO("Framebuffer resized: %dx%d", width, height);
+    KINFO("Framebuffer resized: {}x{}", width, height);
 
     Window* self =
         static_cast<Window*>(
@@ -24,7 +24,7 @@ void Window::framebufferSizeCallback(
 }
 void Window::glfwErrorCallback(int error, const char* description)
 {
-    KERROR("[GLFW Error] (%d) %s", error, description);
+    KERROR("[GLFW Error] ({}) {}", error, description);
 }
 
 Window::Window(
@@ -50,7 +50,7 @@ Window::Window(
     // OpenGL version
     // ----------------
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 
     glfwWindowHint(
         GLFW_OPENGL_PROFILE,
@@ -80,7 +80,7 @@ Window::Window(
         return;
     }
 
-    KINFO("Window created: %dx%d", m_width, m_height);
+    KINFO("Window created: {}x{}", m_width, m_height);
 
     // ----------------
     // Make OpenGL context current

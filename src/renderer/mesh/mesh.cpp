@@ -1,10 +1,14 @@
 #include "mesh.hpp"
 
+#include "../../core/logging/logger.hpp"
+
 #include <stdexcept>
 
-Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices,
+
+
+Mesh::Mesh(const std::vector<MeshVertex> &vertices, const std::vector<unsigned int> &indices,
            GLenum primitiveMode)
-    : m_vbo(vertices.data(), static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertex))),
+    : m_vbo(vertices.data(), static_cast<GLsizeiptr>(vertices.size() * sizeof(MeshVertex))),
       m_ebo(indices.data(), static_cast<unsigned int>(indices.size())),
       m_primitiveMode(primitiveMode) {
     if (vertices.empty()) {
@@ -15,8 +19,20 @@ Mesh::Mesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> 
         throw std::invalid_argument("Mesh: index list is empty");
     }
 
-    BufferLayout Layout{{"v3_Position", GL_FLOAT, 3, GL_FALSE},
-                        {"v3_Color", GL_FLOAT, 3, GL_FALSE},};
+    // An attribute that exists in the struct but is all zeros still needs a layout
+    // entry, otherwise the stride is wrong for every attribute after it.
+    //
+    // Offsets and component counts come from MeshVertex itself, so a typo in a field
+    // name fails to compile instead of quietly shifting every later attribute. The
+    // KASSERT catches a field that was never listed here at all.
+    BufferLayout Layout(
+        attribute("v3_inPosition", &MeshVertex::Position),
+        attribute("v3_inColor",    &MeshVertex::Color),
+        attribute("v3_inNormal",   &MeshVertex::Normal)
+    );
+
+    KASSERT(Layout.getStride() == static_cast<GLsizei>(sizeof(MeshVertex)),
+            "BufferLayout must describe every field of MeshVertex");
 
     m_vao.bind();
 
@@ -38,8 +54,8 @@ void Mesh::unbind() const {
     m_vao.unbind();
 }
 
-void Mesh::updateVertices(const std::vector<Vertex>& vertices) {
-    m_vbo.update(vertices.data(), static_cast<GLsizeiptr>(vertices.size() * sizeof(Vertex)));
+void Mesh::updateVertices(const std::vector<MeshVertex> &vertices) {
+    m_vbo.update(vertices.data(), static_cast<GLsizeiptr>(vertices.size() * sizeof(MeshVertex)));
 }
 
 GLuint Mesh::getVAO() const { return m_vao.getId(); }

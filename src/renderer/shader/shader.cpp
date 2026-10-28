@@ -14,12 +14,12 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     vertexFile.open(vertexPath);
 
     if( !vertexFile.is_open()){
-        KERROR("Could not open vertex shader file: %s", vertexPath);
+        KERROR("Could not open vertex shader file: {}", vertexPath);
         m_id=0;
         return;
     }
 
-    KDEBUG("Loaded vertex shader: %s", vertexPath);
+    KDEBUG("Loaded vertex shader: {}", vertexPath);
     std::stringstream vertexStream;
     vertexStream<<vertexFile.rdbuf();
     vertexFile.close();
@@ -35,12 +35,12 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     fragmentFile.open(fragmentPath);
 
     if( !fragmentFile.is_open()){
-        KERROR("Could not open fragment shader file: %s", fragmentPath);
+        KERROR("Could not open fragment shader file: {}", fragmentPath);
         m_id=0;
         return;
     }
 
-    KDEBUG("Loaded fragment shader: %s", fragmentPath);
+    KDEBUG("Loaded fragment shader: {}", fragmentPath);
     std::stringstream fragmentStream;
     fragmentStream<<fragmentFile.rdbuf();
     fragmentFile.close();
@@ -144,7 +144,7 @@ void Shader::setVec4(
 {
     GLint location=glGetUniformLocation(m_id,name.c_str());
     if(location== -1){
-        KWARN("Uniform not found: %s", name.c_str());
+        KWARN("Uniform not found: {}", name);
         return;
     }
     glUniform4f(location,x,y,z,w);

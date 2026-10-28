@@ -137,10 +137,10 @@ auto GLErrorHandler::checkErrors(std::string_view expr, std::string_view file, i
             break;
         }
 
-        KERROR("[OpenGL Error] %s (%#x)"
-               "\n    at: %s"
-               "\n    in: %s:%d",
-               errorToString(error).data(), error, expr.data(), file.data(), line);
+        KERROR("[OpenGL Error] {} (0x{:x})"
+               "\n    at: {}"
+               "\n    in: {}:{}",
+               errorToString(error), error, expr, file, line);
 
         ok = false;
         ++errorsFound;
@@ -153,10 +153,10 @@ void GLAPIENTRY GLErrorHandler::debugCallback(GLenum source, GLenum type, GLuint
                                               GLenum severity, [[maybe_unused]] GLsizei length,
                                               const GLchar *message,
                                               [[maybe_unused]] const void *userParam) {
-    const char *typeText = typeToString(type).data();
-    const char *sourceText = sourceToString(source).data();
-    const char *severityText = severityToString(severity).data();
-    const char *payload = "[GL Debug] {%u} %s | source: %s | severity: %s\n    %s";
+    const std::string_view typeText = typeToString(type);
+    const std::string_view sourceText = sourceToString(source);
+    const std::string_view severityText = severityToString(severity);
+    constexpr auto payload = "[GL Debug] {} | source: {} | severity: {}\n    {}";
 
     switch (severity) {
     case GL_DEBUG_SEVERITY_HIGH:

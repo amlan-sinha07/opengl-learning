@@ -21,9 +21,9 @@ private:
                                          const void *userParam);
 };
 // got tired of GL_CALL breaking
-#define GL_SWEEP(label)                                                         \
-    do {                                                                        \
-        const bool ok = GLErrorHandler::checkErrors(label, __FILE__, __LINE__); \
-        KASSERT(ok, "OpenGL call reported an error");                           \
-        GLErrorHandler::clearErrors();                                          \
-    } while (false)
+#define GL_SWEEP(label)                                                          \
+    {                                                                            \
+        const bool ok = GLErrorHandler::checkErrors(label, __FILE__, __LINE__);  \
+        KASSERT(ok, "OpenGL call reported an error");                            \
+        GLErrorHandler::clearErrors();                                           \
+    }
