@@ -9,6 +9,7 @@ class VertexArray
 {
 private:
     GLuint m_id{0};
+    /* automatically calculated */
     GLuint m_attributeIndex{0};
     GLuint m_bindingIndex{0};
 

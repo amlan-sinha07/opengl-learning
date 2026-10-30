@@ -12,16 +12,15 @@
 namespace GLHelper
 {
     // Buffer management. All raw buffer calls in the project route through these.
-    [[nodiscard]] auto createAndUploadBuffer(GLenum target, size_t sizeBytes, const void* data, GLenum usage) -> GLuint;
+    [[nodiscard]] auto createAndUploadBuffer([[maybe_unused]]GLenum target, size_t sizeBytes, const void* data, GLenum usage) -> GLuint;
     void bindBuffer(GLenum target, GLuint id);
     void updateBufferSubData(GLenum target, GLuint bufferId, size_t offsetBytes, size_t sizeBytes, const void* data);
     void destroyBuffer(GLuint bufferId);
 
     [[nodiscard]] auto createVertexArray() -> GLuint;
     void destroyVertexArray(GLuint vaoId);
-    // bindingSlot is only used by the OpenGL 4.x glVertexAttribBinding path.
-    // The legacy glVertexAttribPointer path ignores it (kept for API stability).
-    void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout& layout, [[maybe_unused]] GLuint bindingSlot, GLuint& startingAttribIndex);
+    // bindingSlot is used by the DSA vertex attribute binding path.
+    void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout& layout, GLuint bindingSlot, GLuint& startingAttribIndex);
 
     [[nodiscard]] auto createShaderProgram(std::string_view vertexSrc, std::string_view fragmentSrc) -> GLuint;
     void destroyShaderProgram(GLuint programId);
