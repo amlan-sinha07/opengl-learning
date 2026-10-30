@@ -6,22 +6,33 @@ namespace GLHelper {
 auto createAndUploadBuffer(GLenum target, size_t sizeBytes, const void *data, GLenum usage)
     -> GLuint {
     GLuint id{0};
-    glGenBuffers(1, &id);
-    glBindBuffer(target, id);
+    glCreateBuffers(1, &id);
+    glNamedBufferData(id, static_cast<GLsizei>(sizeBytes), data, usage);
+    // target is only needed when we go the old gl route and do global buffer binding
+    /* glBindBuffer(target, id);
     glBufferData(target, static_cast<GLsizeiptr>(sizeBytes), data, usage);
     glBindBuffer(target, 0);
+    */
     KDEBUG("Created buffer {} ({} bytes)", id, sizeBytes);
     return id;
 }
 
 void bindBuffer(GLenum target, GLuint id) { glBindBuffer(target, id); }
 
-void updateBufferSubData(GLenum target, GLuint bufferId, size_t offsetBytes, size_t sizeBytes,
+void updateBufferSubData([[maybe_unused]] GLenum target, GLuint bufferId, size_t offsetBytes, size_t sizeBytes,
                          const void *data) {
+    // DSA: update without touching GL_ARRAY_BUFFER binding state.
+    glNamedBufferSubData(bufferId,
+                         static_cast<GLintptr>(offsetBytes),
+                         static_cast<GLsizeiptr>(sizeBytes),
+                         data);
+    /* Legacy: bind target, glBufferSubData, unbind. */
+    /*
     glBindBuffer(target, bufferId);
     glBufferSubData(target, static_cast<GLintptr>(offsetBytes), static_cast<GLsizeiptr>(sizeBytes),
                     data);
     glBindBuffer(target, 0);
+    */
 }
 
 void destroyBuffer(GLuint bufferId) {
@@ -32,7 +43,7 @@ void destroyBuffer(GLuint bufferId) {
 
 auto createVertexArray() -> GLuint {
     GLuint id{0};
-    glGenVertexArrays(1, &id);
+    glCreateVertexArrays(1, &id);
     KDEBUG("Created vertex array {}", id);
     return id;
 }
@@ -43,34 +54,46 @@ void destroyVertexArray(GLuint vaoId) {
     }
 }
 
-void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout &layout, [[maybe_unused]] GLuint bindingSlot,
-                       GLuint &startingAttribIndex) {
-    // The VAO stores per-attribute state, so binding it here is what makes the
-    // glEnableVertexAttribArray / glVertexAttribPointer calls below "stick".
-    glBindVertexArray(vaoId);
+void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout &layout,
+                       GLuint bindingSlot, GLuint &startingAttribIndex) {
+    // DSA: these mutate the VAO directly by ID, no need to bind it to the context.
+    /* glBindVertexArray(vaoId); */
 
-    // Legacy path: the GL_ARRAY_BUFFER binding is global context state that the VAO
-    // does NOT capture, so we bind it here. The OpenGL 4.x path (commented out below)
-    // did not need this because glBindVertexBuffer records the binding inside the VAO.
-    bindBuffer(GL_ARRAY_BUFFER, vboId);
+    // Attach the VBO to this VAO at bindingSlot with the layout stride.(static_cast maybe removed later)
+    glVertexArrayVertexBuffer(vaoId, bindingSlot, vboId, 0, static_cast<GLsizei>(layout.getStride()));
 
-    for (const auto &Element : layout.getElements()) {
+    /* Legacy (bind-to-edit): glVertexAttribPointer reads from the currently bound
+       GL_ARRAY_BUFFER. With DSA we don't rely on global GL_ARRAY_BUFFER state. */
+    /* bindBuffer(GL_ARRAY_BUFFER, vboId); */
+
+    for (const BufferElement &Element : layout.getElements()) {
         KDEBUG("loop used for {}", Element.name);
 
-        glEnableVertexAttribArray(startingAttribIndex);
-        // stride  = bytes between consecutive vertices
-        // offset  = bytes from the start of a vertex to THIS attribute
-        glVertexAttribPointer(startingAttribIndex,
+        // Enable attribute on the specific VAO by ID.
+        glEnableVertexArrayAttrib(vaoId, startingAttribIndex);
+        /* Legacy: glVertexAttribPointer requires VAO bound + GL_ARRAY_BUFFER bound.
+           Replaced by glVertexArrayAttribFormat/glVertexArrayAttribBinding below. */
+        /* glVertexAttribPointer(startingAttribIndex,
                               static_cast<GLint>(Element.count),
                               Element.type,
                               Element.normalized,
                               layout.getStride(),
-                              reinterpret_cast<const void *>(Element.offset));
+                              reinterpret_cast<const void *>(Element.offset)); */
+
+        // Describe how to interpret the raw bytes (type, count, normalized, offset).
+        glVertexArrayAttribFormat(vaoId,
+                                  startingAttribIndex,
+                                  static_cast<GLint>(Element.count),
+                                  Element.type,
+                                  Element.normalized,
+                                  static_cast<GLuint>(Element.offset));
+        // Link this attribute to the binding slot where the VBO is attached.
+        glVertexArrayAttribBinding(vaoId, startingAttribIndex, bindingSlot);
 
         startingAttribIndex++;
     }
 
-    glBindVertexArray(0);
+    /* glBindVertexArray(0); */
 
     // ---------------------------------------------------------------------------
     // OpenGL 4.x alternative (DSA / "modern" path). Commented out because it is
@@ -149,10 +172,13 @@ void clearFrame(const std::array<float, 4> &color, GLbitfield mask) {
 }
 
 void drawElements(GLuint vaoId, GLuint eboId, GLenum primitiveMode, GLsizei count) {
-    glBindVertexArray(vaoId);
-    bindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
+    // Attach EBO to this VAO by ID (DSA). The VAO still needs to be bound to the
+    // context for glDrawElements to read from it (done via Mesh::bind()).
+    glVertexArrayElementBuffer(vaoId, eboId);
+    /* glBindVertexArray(vaoId); */
+    /* bindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId); */
     glDrawElements(primitiveMode, count, GL_UNSIGNED_INT, nullptr);
-    glBindVertexArray(0);
+    /* glBindVertexArray(0); */
 }
 
 }

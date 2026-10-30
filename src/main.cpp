@@ -46,10 +46,10 @@ auto main() -> int {
 
         std::vector<MeshVertex> Vertices{
             // (n:even)position   // (n+1:odd)color
-            {glm::vec3{-0.5F, -0.5F, 0.0F}, glm::vec3{1.0F, 0.0F, 0.0F}, glm::vec3{0.0F, 0.0F, 0.0F}},  // red
-            {glm::vec3{0.5F, -0.5F, 0.0F}, glm::vec3{0.0F, 1.0F, 0.0F}, glm::vec3{0.0F, 0.0F, 0.0F}},   // green
-            {glm::vec3{0.5F, 0.5F, 0.0F}, glm::vec3{0.0F, 0.0F, 1.0F}, glm::vec3{0.0F, 0.0F, 0.0F}},    // blue
-            {glm::vec3{-0.5F, 0.5F, 0.0F}, glm::vec3{1.0F, 1.0F, 0.0F}, glm::vec3{0.0F, 0.0F, 0.0F}},   // yellow
+            {.Position =glm::vec3{-0.5F, -0.5F, 0.0F}, .Color=glm::vec3{1.0F, 0.0F, 0.0F}, .Normal=glm::vec3{0.0F, 0.0F, 0.0F}},  // red
+            {.Position=glm::vec3{0.5F, -0.5F, 0.0F}, .Color=glm::vec3{0.0F, 1.0F, 0.0F}, .Normal=glm::vec3{0.0F, 0.0F, 0.0F}},   // green
+            {.Position=glm::vec3{0.5F, 0.5F, 0.0F}, .Color=glm::vec3{0.0F, 0.0F, 1.0F}, .Normal=glm::vec3{0.0F, 0.0F, 0.0F}},    // blue
+            {.Position=glm::vec3{-0.5F, 0.5F, 0.0F}, .Color=glm::vec3{1.0F, 1.0F, 0.0F}, .Normal=glm::vec3{0.0F, 0.0F, 0.0F}},   // yellow
         };
 
         std::vector<unsigned int> Indices{0, 1, 2, 2, 3, 0};
@@ -66,14 +66,14 @@ auto main() -> int {
         float time = 0.0F;
 
         while (0 == Window.shouldClose()) {
-            time += 0.016F;
+            time += 0.05F;
             float pulse = (std::sin(time) + 1.0F) * 0.5F;
             glm::vec3 currentScale = glm::lerp(baseScale, pulseScale, pulse);
 
             std::vector<MeshVertex> animatedVertices;
             animatedVertices.reserve(Vertices.size());
             for (const auto &v : Vertices) {
-                animatedVertices.push_back({v.Position * currentScale, v.Color, v.Normal});
+                animatedVertices.push_back({.Position=v.Position * currentScale, .Color=v.Color, .Normal=v.Normal});
             }
 
             Rectangle.updateVertices(animatedVertices);
