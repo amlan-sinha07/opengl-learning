@@ -29,15 +29,15 @@ public:
     Mesh &operator=(const Mesh &) = delete;
 
     // Moving allowed
-    Mesh(Mesh &&) noexcept = default;
-    Mesh &operator=(Mesh &&) noexcept = default;
+    Mesh(Mesh &&) noexcept = delete;
+    auto operator=(Mesh &&) noexcept -> Mesh & = delete;
 
     void bind() const;
     void unbind() const;
     void updateVertices(const std::vector<MeshVertex> &vertices);
 
-    GLuint getVAO() const;
-    GLuint getEBO() const;
-    GLsizei getIndexCount() const;
-    GLenum getPrimitiveMode() const;
+    [[nodiscard]] auto getVAO() const -> GLuint;
+    [[nodiscard]] auto getEBO() const -> GLuint;
+    [[nodiscard]] auto getIndexCount() const -> GLsizei;
+    [[nodiscard]] auto getPrimitiveMode() const -> GLenum;
 };
