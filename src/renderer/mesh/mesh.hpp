@@ -29,8 +29,8 @@ public:
     Mesh &operator=(const Mesh &) = delete;
 
     // Moving allowed
-    Mesh(Mesh &&) noexcept = delete;
-    auto operator=(Mesh &&) noexcept -> Mesh & = delete;
+    Mesh(Mesh &&) noexcept;
+    auto operator=(Mesh &&) noexcept -> Mesh &;
 
     void bind() const;
     void unbind() const;
