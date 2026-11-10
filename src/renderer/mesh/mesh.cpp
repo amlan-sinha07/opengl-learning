@@ -3,8 +3,7 @@
 #include "../../core/logging/logger.hpp"
 
 #include <stdexcept>
-
-
+#include <utility>
 
 Mesh::Mesh(const std::vector<MeshVertex> &vertices, const std::vector<unsigned int> &indices,
            GLenum primitiveMode)
@@ -25,11 +24,9 @@ Mesh::Mesh(const std::vector<MeshVertex> &vertices, const std::vector<unsigned i
     // Offsets and component counts come from MeshVertex itself, so a typo in a field
     // name fails to compile instead of quietly shifting every later attribute. The
     // KASSERT catches a field that was never listed here at all.
-    BufferLayout Layout(
-        attribute("v3_inPosition", &MeshVertex::Position),
-        attribute("v3_inColor",    &MeshVertex::Color),
-        attribute("v3_inNormal",   &MeshVertex::Normal)
-    );
+    BufferLayout Layout(attribute("v3_inPosition", &MeshVertex::Position),
+                        attribute("v3_inColor", &MeshVertex::Color),
+                        attribute("v3_inNormal", &MeshVertex::Normal));
 
     KASSERT(Layout.getStride() == static_cast<GLsizei>(sizeof(MeshVertex)),
             "BufferLayout must describe every field of MeshVertex");
@@ -42,6 +39,23 @@ Mesh::Mesh(const std::vector<MeshVertex> &vertices, const std::vector<unsigned i
 
     m_vao.unbind();
     m_ebo.unbind();
+}
+
+// Moving allowed
+Mesh::Mesh(Mesh &&other) noexcept
+    : m_vao(std::move(other.m_vao)),
+      m_vbo(std::move(other.m_vbo)),
+      m_ebo(std::move(other.m_ebo)),
+      m_primitiveMode(other.m_primitiveMode) {}
+
+auto Mesh::operator=(Mesh &&other) noexcept -> Mesh & {
+    if (this != &other) {
+        m_vao = std::move(other.m_vao);
+        m_vbo = std::move(other.m_vbo);
+        m_ebo = std::move(other.m_ebo);
+        m_primitiveMode = other.m_primitiveMode;
+    }
+    return *this;
 }
 
 void Mesh::bind() const {

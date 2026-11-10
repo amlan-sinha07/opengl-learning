@@ -1,6 +1,6 @@
 # opengl-learning
 
-OpenGL learning project. C++23, GLFW, GLAD, GLSL 450 core.
+OpenGL learning project. C++23, OpenGL 4.5 core, GLSL 450 core, GLFW, GLAD, GLM.
 
 ## Building
 
@@ -23,7 +23,7 @@ src/
 ├── core/
 │   ├── debugging/              GL error checking
 │   └── logging/                logger
-├── platform/window.cpp         GLFW window and GL context
+├── platform/window.cpp         GLFW window, GL context, monitor setup
 └── renderer/
     ├── buffers/                VBO, EBO, VAO, buffer layout
     ├── mesh/                   Vertex, Mesh
@@ -36,7 +36,7 @@ Every raw GL call lives in `renderer/rendering/gl_helper.cpp`.
 ## Shaders
 
 `shaders/vertex.vert` and `shaders/fragment.frag` take a position and a color per
-vertex and pass the color straight through to the fragment shader.
+vertex and pass the color straight through to the fragment shader. Both use `#version 450 core`.
 
 ## Math
 
@@ -70,12 +70,44 @@ struct MeshVertex {
 };                      // 36 bytes, stride 36
 ```
 
-`BufferLayout` computes element offsets and the stride from the element list.
+`BufferLayout` computes element offsets and the stride from the element list using
+member pointers. `Mesh` move operations are disabled.
 
-## Drawing
+## Rendering
 
-`attachLayoutToVAO` uses `glVertexAttribPointer`. The OpenGL 4.x
-`glVertexAttribFormat` version is commented out directly below it for comparison. The
-legacy path needs an explicit `glBindBuffer(GL_ARRAY_BUFFER, ...)` because that
-binding is global state the VAO does not capture, the 4.x path does not because
-`glBindVertexBuffer` records it inside the VAO.
+All raw GL calls go through `GLHelper`. Buffer and VAO creation use Direct State Access (DSA)
+where possible (`glCreateBuffers`, `glNamedBufferData`, `glNamedBufferSubData`, `glCreateVertexArrays`).
+
+### Renderer API
+
+```cpp
+Renderer Renderer;
+
+// Set clear color
+Renderer.clear_color({0.1f, 0.1f, 0.1f, 1.0f});
+
+// Clear with specified bit masks (OR'd together)
+Renderer.clear_bits(GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT);
+
+// Draw a mesh with a shader
+Renderer.draw(Rectangle, Shader);
+```
+
+`clear_bits` is variadic and ORs all provided masks together. `clear_color` sets the clear
+color via `glClearColor`. `GLHelper` splits clearing into `clearColor` and `clearMask`.
+
+### VAO setup (DSA)
+
+`attachLayoutToVAO` configures vertex attributes directly on the VAO by ID using:
+- `glVertexArrayVertexBuffer` to bind the VBO to a binding slot with the layout stride
+- `glEnableVertexArrayAttrib`, `glVertexArrayAttribFormat`, `glVertexArrayAttribBinding` to describe each attribute
+- `glVertexArrayElementBuffer` attaches the EBO to the VAO in the draw path
+
+Redundant context bindings like `glBindVertexArray` and `glBindBuffer` are commented out with
+notes explaining the difference between object state (DSA) and context binding state (legacy).
+The old bind-to-edit paths remain commented for learning/comparison.
+
+### Window
+
+The window is created on the primary monitor with work area queried via `glfwGetMonitorWorkarea`.
+OpenGL debug context is enabled. Framebuffer resize updates the viewport.

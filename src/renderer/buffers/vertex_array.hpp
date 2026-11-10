@@ -21,12 +21,8 @@ public:
     VertexArray(const VertexArray&) = delete;
     VertexArray& operator=(const VertexArray&) = delete;
 
-    // Only moving. Generated move ops copy the counters and leave the source's
-    // members untouched, so the source VAO keeps a live GL name and would be
-    // deleted twice by ~VertexArray. Moving a VertexArray is therefore not
-    // safe -- only construct it in place.
-    VertexArray(VertexArray&&) = delete;
-    VertexArray& operator=(VertexArray&&) = delete;
+    VertexArray(VertexArray&& other) noexcept;
+    VertexArray& operator=(VertexArray&& other) noexcept;
 
     void bind() const;
     void unbind() const;

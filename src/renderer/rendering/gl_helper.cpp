@@ -3,7 +3,7 @@
 
 namespace GLHelper {
 
-auto createAndUploadBuffer(GLenum target, size_t sizeBytes, const void *data, GLenum usage)
+auto createAndUploadBuffer([[maybe_unused]] GLenum target, size_t sizeBytes, const void *data, GLenum usage)
     -> GLuint {
     GLuint id{0};
     glCreateBuffers(1, &id);
@@ -125,8 +125,8 @@ static auto compileSingleShader(GLenum type, std::string_view source) -> GLuint 
     GLint success = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
-        char infoLog[512];
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+        std::array<char,LOG_BUFFER> infoLog{};
+        glGetShaderInfoLog(shader, LOG_BUFFER, nullptr, infoLog.data());
         KERROR("Shader compilation error ({}):\n{}",
                type == GL_VERTEX_SHADER ? "Vertex" : "Fragment", infoLog);
     } else {
@@ -147,8 +147,8 @@ auto createShaderProgram(std::string_view vertexSrc, std::string_view fragmentSr
     GLint success = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &success);
     if (success == GL_FALSE) {
-        char infoLog[512];
-        glGetProgramInfoLog(program, 512, nullptr, infoLog);
+        std::array<char,LOG_BUFFER> infoLog{};
+        glGetProgramInfoLog(program, LOG_BUFFER, nullptr, infoLog.data());
         KERROR("Shader program link error:\n{}", infoLog);
     } else {
         KINFO("Shader program linked");
@@ -166,8 +166,9 @@ void destroyShaderProgram(GLuint programId) {
     }
 }
 
-void clearFrame(const std::array<float, 4> &color, GLbitfield mask) {
-    glClearColor(color[0], color[1], color[2], color[3]);
+void clearColor(const std::array<float, 4> &color){glClearColor(color.at(0), color.at(1), color.at(2), color.at(3));};
+
+void clearMask(GLbitfield mask) {
     glClear(mask);
 }
 

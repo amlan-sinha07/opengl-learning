@@ -78,7 +78,8 @@ auto main() -> int {
 
             Rectangle.updateVertices(animatedVertices);
 
-            Renderer.clear();
+            Renderer.clear_color({0.5,0.5,0.5,1.0});
+            Renderer.clear_bits(GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT);
             Renderer.draw(Rectangle, Shader);
 
             Window.swapBuffers();
