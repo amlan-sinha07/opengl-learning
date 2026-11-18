@@ -25,8 +25,8 @@ Mesh::Mesh(const std::vector<MeshVertex> &vertices, const std::vector<unsigned i
     // name fails to compile instead of quietly shifting every later attribute. The
     // KASSERT catches a field that was never listed here at all.
     BufferLayout Layout(attribute("v3_inPosition", &MeshVertex::Position),
-                        attribute("v3_inColor", &MeshVertex::Color),
-                        attribute("v3_inNormal", &MeshVertex::Normal));
+                        attribute("v3_inColor", &MeshVertex::Color)/* ,
+                        attribute("v3_inNormal", &MeshVertex::Normal) */);
 
     KASSERT(Layout.getStride() == static_cast<GLsizei>(sizeof(MeshVertex)),
             "BufferLayout must describe every field of MeshVertex");
@@ -72,10 +72,10 @@ void Mesh::updateVertices(const std::vector<MeshVertex> &vertices) {
     m_vbo.update(vertices.data(), static_cast<GLsizeiptr>(vertices.size() * sizeof(MeshVertex)));
 }
 
-GLuint Mesh::getVAO() const { return m_vao.getId(); }
+auto Mesh::getVAO() const -> GLuint { return m_vao.getId(); }
 
-GLuint Mesh::getEBO() const { return m_ebo.getId(); }
+auto Mesh::getEBO() const -> GLuint { return m_ebo.getId(); }
 
-GLsizei Mesh::getIndexCount() const { return static_cast<GLsizei>(m_ebo.getCount()); }
+auto Mesh::getIndexCount() const -> GLsizei { return static_cast<GLsizei>(m_ebo.getCount()); }
 
-GLenum Mesh::getPrimitiveMode() const { return m_primitiveMode; }
+auto Mesh::getPrimitiveMode() const -> GLenum { return m_primitiveMode; }

@@ -83,6 +83,7 @@ Desktop.ini
 # Local build scripts and scratch
 build.bat
 doc/
+ref/
 scene.hpp
 src/gl.c
 .power_builder.conf

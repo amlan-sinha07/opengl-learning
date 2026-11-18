@@ -19,10 +19,10 @@ public:
 
     // No copying
     VertexArray(const VertexArray&) = delete;
-    VertexArray& operator=(const VertexArray&) = delete;
+    auto operator=(const VertexArray&) -> VertexArray& = delete;
 
     VertexArray(VertexArray&& other) noexcept;
-    VertexArray& operator=(VertexArray&& other) noexcept;
+    auto operator=(VertexArray&& other) noexcept -> VertexArray&;
 
     void bind() const;
     void unbind() const;
