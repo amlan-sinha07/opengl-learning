@@ -30,7 +30,7 @@ VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
     other.m_size = 0;
 }
 
-VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
+auto VertexBuffer::operator=(VertexBuffer&& other) noexcept -> VertexBuffer&
 {
     if (this != &other)
     {
@@ -64,12 +64,12 @@ void VertexBuffer::update(
     GLHelper::updateBufferSubData(TARGET, m_id, 0, size, data);
 }
 
-GLuint VertexBuffer::getId() const
+auto VertexBuffer::getId() const -> GLuint
 {
     return m_id;
 }
 
-GLsizeiptr VertexBuffer::getSize() const
+auto VertexBuffer::getSize() const -> GLsizeiptr
 {
     return m_size;
 }

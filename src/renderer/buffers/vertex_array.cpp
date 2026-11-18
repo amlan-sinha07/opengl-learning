@@ -16,7 +16,7 @@ VertexArray::VertexArray(VertexArray &&other) noexcept
     other.m_bindingIndex = 0;
 }
 
-VertexArray &VertexArray::operator=(VertexArray &&other) noexcept {
+auto VertexArray::operator=(VertexArray &&other) noexcept -> VertexArray & {
     if (this != &other) {
         if (m_id != 0) {
             GLHelper::destroyVertexArray(m_id);

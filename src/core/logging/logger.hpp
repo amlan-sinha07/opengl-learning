@@ -6,9 +6,12 @@
 #pragma once
 
 #include <cassert>
+#include <cstdlib>
 #include <format>
+#include <optional>
 #include <string>
 #include <string_view>
+#include <utility>
 
 // SUCH LOGS CAN BE DISABLED
 #define LOG_WARN_ENABLED 1
@@ -21,6 +24,16 @@
     // Release builds drop Debug/Trace entirely
     #define LOG_DEBUG_ENABLED 0
     #define LOG_TRACE_ENABLED 0
+#endif
+
+// Prepend [HH:MM:SS.mmm] to every line
+#ifndef LOG_TIMESTAMP_ENABLED
+    #define LOG_TIMESTAMP_ENABLED 1
+#endif
+
+// ANSI colors, only used when stderr is a terminal
+#ifndef LOG_COLOR_ENABLED
+    #define LOG_COLOR_ENABLED 1
 #endif
 
 namespace Log {
@@ -42,15 +55,21 @@ namespace Log {
         "Log levels must be ordered from most severe to least severe."
     );
 
-    //! not thread safe
-    //todo make thread safe
-    [[nodiscard]] bool isEnabled(Level level);
+    // Thread safe: level is atomic and writes are serialized.
+    [[nodiscard]] auto isEnabled(Level level) -> bool;
     void setLevel(Level level);
+
+    [[nodiscard]] auto levelFromString(std::string_view name) -> std::optional<Level>;
+
+    // Reads LOG_LEVEL (fatal|error|warn|info|debug|trace) and overrides the
+    // current level when the variable is set to a valid value.
+    void initFromEnv();
+
     void write(Level level, const char* file, int line, std::string_view message);
 
     template <typename... Args>
     void output(Level level, const char* file, int line,
-                std::format_string<Args...> fmt, Args&&... args) {
+                std::format_string<Args...> fmt, const Args&... args) {
         if (!isEnabled(level)) {
             return;
         }
@@ -89,11 +108,15 @@ namespace Log {
 #define KTRACE(...) ((void)0)
 #endif
 
-#define KASSERT(condition, message) \
-    { \
-        const bool condition_result = static_cast<bool>(condition); \
-        if (!condition_result) { \
-            KERROR("Assertion failed: {} -- {}", #condition, message); \
-        } \
-        assert(condition_result); \
-    }
+// Compiles out completely in release builds (NDEBUG).
+#ifdef NDEBUG
+    #define KASSERT(condition, message) ((void)0)
+#else
+    #define KASSERT(condition, message) \
+        do { \
+            if (!(condition)) { \
+                KERROR("Assertion failed: {} -- {}", #condition, message); \
+                std::abort(); \
+            } \
+        } while (false)
+#endif

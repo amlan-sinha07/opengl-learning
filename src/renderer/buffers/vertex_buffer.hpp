@@ -25,6 +25,6 @@ public:
     void unbind() const;
     void update(const void* data, GLsizeiptr size);
 
-    GLuint getId() const;
-    GLsizeiptr getSize() const;
+    auto getId() const -> GLuint;
+    auto getSize() const -> GLsizeiptr;
 };
