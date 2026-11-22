@@ -25,5 +25,6 @@ private:
     {                                                                            \
         const bool ok = GLErrorHandler::checkErrors(label, __FILE__, __LINE__);  \
         KASSERT(ok, "OpenGL call reported an error");                            \
+        (void)ok; /* KASSERT compiles out under NDEBUG */                        \
         GLErrorHandler::clearErrors();                                           \
     }

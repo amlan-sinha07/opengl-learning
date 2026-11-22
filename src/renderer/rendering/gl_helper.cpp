@@ -57,17 +57,17 @@ void destroyVertexArray(GLuint vaoId) {
 void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout &layout,
                        GLuint bindingSlot, GLuint &startingAttribIndex) {
     // DSA: these mutate the VAO directly by ID, no need to bind it to the context.
-    /* glBindVertexArray(vaoId); */
+    // glBindVertexArray(vaoId);
 
     // Attach the VBO to this VAO at bindingSlot with the layout stride.(static_cast maybe removed later)
     glVertexArrayVertexBuffer(vaoId, bindingSlot, vboId, 0, static_cast<GLsizei>(layout.getStride()));
 
     /* Legacy (bind-to-edit): glVertexAttribPointer reads from the currently bound
        GL_ARRAY_BUFFER. With DSA we don't rely on global GL_ARRAY_BUFFER state. */
-    /* bindBuffer(GL_ARRAY_BUFFER, vboId); */
+    // bindBuffer(GL_ARRAY_BUFFER, vboId);
 
     for (const BufferElement &Element : layout.getElements()) {
-        KDEBUG("loop used for {}", Element.name);
+        KDEBUG("loop used for {} on binding slot {} and attribute index {}", Element.name, bindingSlot, startingAttribIndex);
 
         // Enable attribute on the specific VAO by ID.
         glEnableVertexArrayAttrib(vaoId, startingAttribIndex);
@@ -154,7 +154,9 @@ auto createShaderProgram(std::string_view vertexSrc, std::string_view fragmentSr
         KINFO("Shader program linked");
     }
 
+    // glDetachShader(program, vert);
     glDeleteShader(vert);
+    // glDetachShader(program, vert);
     glDeleteShader(frag);
 
     return program;

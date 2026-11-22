@@ -3,6 +3,7 @@
 #include "../../core/logging/logger.hpp"
 #include <fstream>
 #include <sstream>
+#include <glm/gtc/type_ptr.hpp>
 
 Shader::Shader(const char* vertexPath,const char* fragmentPath){
     //-------------------------
@@ -148,6 +149,16 @@ void Shader::setVec4(
         return;
     }
     glUniform4f(location,x,y,z,w);
+}
+
+void Shader::setMat4(const std::string& name, const glm::mat4& mat)
+{
+    GLint location = glGetUniformLocation(m_id, name.c_str());
+    if (location == -1) {
+        KWARN("Uniform not found: {}", name);
+        return;
+    }
+    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }
 GLuint Shader::getId() const{
     return m_id;

@@ -6,7 +6,7 @@
 struct MeshVertex {
     glm::vec3 Position{0.0F, 0.0F, 0.0F};
     glm::vec3 Color{0.0F, 0.0F, 0.0F};
-    glm::vec3 Normal{0.0F, 0.0F, 0.0F};
+    /* glm::vec3 Normal{0.0F, 0.0F, 0.0F}; */
     /*
     glm::vec2 UV; // texture coordinates
     glm::uvec4 BoneIDs;
