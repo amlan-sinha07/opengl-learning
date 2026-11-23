@@ -3,8 +3,8 @@
 
 namespace GLHelper {
 
-auto createAndUploadBuffer([[maybe_unused]] GLenum target, size_t sizeBytes, const void *data, GLenum usage)
-    -> GLuint {
+auto createAndUploadBuffer([[maybe_unused]] GLenum target, size_t sizeBytes, const void *data,
+                           GLenum usage) -> GLuint {
     GLuint id{0};
     glCreateBuffers(1, &id);
     glNamedBufferData(id, static_cast<GLsizei>(sizeBytes), data, usage);
@@ -19,13 +19,11 @@ auto createAndUploadBuffer([[maybe_unused]] GLenum target, size_t sizeBytes, con
 
 void bindBuffer(GLenum target, GLuint id) { glBindBuffer(target, id); }
 
-void updateBufferSubData([[maybe_unused]] GLenum target, GLuint bufferId, size_t offsetBytes, size_t sizeBytes,
-                         const void *data) {
+void updateBufferSubData([[maybe_unused]] GLenum target, GLuint bufferId, size_t offsetBytes,
+                         size_t sizeBytes, const void *data) {
     // DSA: update without touching GL_ARRAY_BUFFER binding state.
-    glNamedBufferSubData(bufferId,
-                         static_cast<GLintptr>(offsetBytes),
-                         static_cast<GLsizeiptr>(sizeBytes),
-                         data);
+    glNamedBufferSubData(bufferId, static_cast<GLintptr>(offsetBytes),
+                         static_cast<GLsizeiptr>(sizeBytes), data);
     /* Legacy: bind target, glBufferSubData, unbind. */
     /*
     glBindBuffer(target, bufferId);
@@ -54,23 +52,26 @@ void destroyVertexArray(GLuint vaoId) {
     }
 }
 
-void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout &layout,
-                       GLuint bindingSlot, GLuint &startingAttribIndex) {
+void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout &layout, GLuint bindingSlot,
+                       GLuint &startingAttribIndex) {
     // DSA: these mutate the VAO directly by ID, no need to bind it to the context.
     // glBindVertexArray(vaoId);
 
-    // Attach the VBO to this VAO at bindingSlot with the layout stride.(static_cast maybe removed later)
-    glVertexArrayVertexBuffer(vaoId, bindingSlot, vboId, 0, static_cast<GLsizei>(layout.getStride()));
+    // Attach the VBO to this VAO at bindingSlot with the layout stride.(static_cast maybe removed
+    // later)
+    glVertexArrayVertexBuffer(vaoId, bindingSlot, vboId, 0,
+                              static_cast<GLsizei>(layout.getStride()));
 
     /* Legacy (bind-to-edit): glVertexAttribPointer reads from the currently bound
        GL_ARRAY_BUFFER. With DSA we don't rely on global GL_ARRAY_BUFFER state. */
     // bindBuffer(GL_ARRAY_BUFFER, vboId);
 
     for (const BufferElement &Element : layout.getElements()) {
-        KDEBUG("loop used for {} on binding slot {} and attribute index {}", Element.name, bindingSlot, startingAttribIndex);
+        KDEBUG("loop used for {} on binding slot {} and attribute index {}", Element.name,
+               bindingSlot, startingAttribIndex);
 
-        // Enable attribute on the specific VAO by ID.
-        glEnableVertexArrayAttrib(vaoId, startingAttribIndex);
+        // Enable attribute on the specific VAO by ID
+        // glEnableVertexArrayAttrib(vaoId, startingAttribIndex);
         /* Legacy: glVertexAttribPointer requires VAO bound + GL_ARRAY_BUFFER bound.
            Replaced by glVertexArrayAttribFormat/glVertexArrayAttribBinding below. */
         /* glVertexAttribPointer(startingAttribIndex,
@@ -81,12 +82,12 @@ void attachLayoutToVAO(GLuint vaoId, GLuint vboId, const BufferLayout &layout,
                               reinterpret_cast<const void *>(Element.offset)); */
 
         // Describe how to interpret the raw bytes (type, count, normalized, offset).
-        glVertexArrayAttribFormat(vaoId,
-                                  startingAttribIndex,
-                                  static_cast<GLint>(Element.count),
-                                  Element.type,
-                                  Element.normalized,
+        glVertexArrayAttribFormat(vaoId, startingAttribIndex, static_cast<GLint>(Element.count),
+                                  Element.type, Element.normalized,
                                   static_cast<GLuint>(Element.offset));
+
+        // Enable attribute on the specific VAO by ID but this time after the formatting
+        glEnableVertexArrayAttrib(vaoId, startingAttribIndex);
         // Link this attribute to the binding slot where the VBO is attached.
         glVertexArrayAttribBinding(vaoId, startingAttribIndex, bindingSlot);
 
@@ -125,7 +126,7 @@ static auto compileSingleShader(GLenum type, std::string_view source) -> GLuint 
     GLint success = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (success == GL_FALSE) {
-        std::array<char,LOG_BUFFER> infoLog{};
+        std::array<char, LOG_BUFFER> infoLog{};
         glGetShaderInfoLog(shader, LOG_BUFFER, nullptr, infoLog.data());
         KERROR("Shader compilation error ({}):\n{}",
                type == GL_VERTEX_SHADER ? "Vertex" : "Fragment", infoLog);
@@ -147,13 +148,14 @@ auto createShaderProgram(std::string_view vertexSrc, std::string_view fragmentSr
     GLint success = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &success);
     if (success == GL_FALSE) {
-        std::array<char,LOG_BUFFER> infoLog{};
+        std::array<char, LOG_BUFFER> infoLog{};
         glGetProgramInfoLog(program, LOG_BUFFER, nullptr, infoLog.data());
         KERROR("Shader program link error:\n{}", infoLog);
     } else {
         KINFO("Shader program linked");
     }
 
+    // aww dont get too detached
     // glDetachShader(program, vert);
     glDeleteShader(vert);
     // glDetachShader(program, vert);
@@ -168,11 +170,11 @@ void destroyShaderProgram(GLuint programId) {
     }
 }
 
-void clearColor(const std::array<float, 4> &color){glClearColor(color.at(0), color.at(1), color.at(2), color.at(3));};
+void clearColor(const std::array<float, 4> &color) {
+    glClearColor(color.at(0), color.at(1), color.at(2), color.at(3));
+};
 
-void clearMask(GLbitfield mask) {
-    glClear(mask);
-}
+void clearMask(GLbitfield mask) { glClear(mask); }
 
 void drawElements(GLuint vaoId, GLuint eboId, GLenum primitiveMode, GLsizei count) {
     // Attach EBO to this VAO by ID (DSA). The VAO still needs to be bound to the
