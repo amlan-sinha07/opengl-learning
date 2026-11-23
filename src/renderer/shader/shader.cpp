@@ -5,64 +5,63 @@
 #include <sstream>
 #include <glm/gtc/type_ptr.hpp>
 
-Shader::Shader(const char* vertexPath,const char* fragmentPath){
+Shader::Shader(const char *vertexPath, const char *fragmentPath) {
     //-------------------------
-    //READ VERTEX SHADER SOURCE
+    // READ VERTEX SHADER SOURCE
     //-------------------------
     std::string vertexCode;
     std::ifstream vertexFile;
 
     vertexFile.open(vertexPath);
 
-    if( !vertexFile.is_open()){
+    if (!vertexFile.is_open()) {
         KERROR("Could not open vertex shader file: {}", vertexPath);
-        m_id=0;
+        m_id = 0;
         return;
     }
 
     KDEBUG("Loaded vertex shader: {}", vertexPath);
     std::stringstream vertexStream;
-    vertexStream<<vertexFile.rdbuf();
+    vertexStream << vertexFile.rdbuf();
     vertexFile.close();
 
-    vertexCode=vertexStream.str();
+    vertexCode = vertexStream.str();
 
     //-------------------------
-    //READ FRAGMENT SHADER SOURCE
+    // READ FRAGMENT SHADER SOURCE
     //-------------------------
     std::string fragmentCode;
     std::ifstream fragmentFile;
 
     fragmentFile.open(fragmentPath);
 
-    if( !fragmentFile.is_open()){
+    if (!fragmentFile.is_open()) {
         KERROR("Could not open fragment shader file: {}", fragmentPath);
-        m_id=0;
+        m_id = 0;
         return;
     }
 
     KDEBUG("Loaded fragment shader: {}", fragmentPath);
     std::stringstream fragmentStream;
-    fragmentStream<<fragmentFile.rdbuf();
+    fragmentStream << fragmentFile.rdbuf();
     fragmentFile.close();
 
-    fragmentCode=fragmentStream.str();
+    fragmentCode = fragmentStream.str();
 
-    const char* vertexSource=vertexCode.c_str();
-    const char* fragmentSource=fragmentCode.c_str();
+    const char *vertexSource = vertexCode.c_str();
+    const char *fragmentSource = fragmentCode.c_str();
 
     KDEBUG("Creating shader program");
 
     //-----------------------------------
-    //CREATE VERTEX SHADER
+    // CREATE VERTEX SHADER
     //-----------------------------------
-    m_id=GLHelper::createShaderProgram(vertexSource, fragmentSource);
+    m_id = GLHelper::createShaderProgram(vertexSource, fragmentSource);
 
-    if (m_id == 0)
-    {
+    if (m_id == 0) {
         KERROR("Shader program creation failed");
     }
-    //GLuint vertexShader=
+    // GLuint vertexShader=
     /* glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertexShader,1,&vertexSource,nullptr);
     glCompileShader(vertexShader);
@@ -84,9 +83,9 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     <<infoLog<<"\n";
     } */
     //----------------------
-    //create fragment shader
+    // create fragment shader
     //----------------------
-    //GLuint fragmentShader=
+    // GLuint fragmentShader=
     /* glCreateShader(GL_FRAGMENT_SHADER);
 
     glShaderSource(fragmentShader,1,&fragmentSource,nullptr);
@@ -128,44 +127,43 @@ Shader::Shader(const char* vertexPath,const char* fragmentPath){
     //once linked ,individual shaders are no longer needed
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader); */
-
 }
-void Shader::use()
-{
+void Shader::use() {
     KASSERT(m_id != 0, "Shader program is not initialized");
     glUseProgram(m_id);
 }
-void Shader::setVec4(
-    const std::string& name,
-    float x,
-    float y,
-    float z,
-    float w
-)
-{
-    GLint location=glGetUniformLocation(m_id,name.c_str());
-    if(location== -1){
+void Shader::setVec4(const std::string &name, float x, float y, float z, float w) {
+    GLint location = tryAndFindUniformfromCache(m_id, name.c_str());
+    if (location == -1) {
         KWARN("Uniform not found: {}", name);
         return;
     }
-    glUniform4f(location,x,y,z,w);
+    glUniform4f(location, x, y, z, w);
 }
 
-void Shader::setMat4(const std::string& name, const glm::mat4& mat)
-{
-    GLint location = glGetUniformLocation(m_id, name.c_str());
+void Shader::setMat4(const std::string &name, const glm::mat4 &mat) {
+    GLint location = tryAndFindUniformfromCache(m_id, name.c_str());
     if (location == -1) {
         KWARN("Uniform not found: {}", name);
         return;
     }
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }
-GLuint Shader::getId() const{
-    return m_id;
-}
-Shader::~Shader()
-{
-    if(m_id!=0){
+auto Shader::getId() const -> GLuint { return m_id; }
+
+Shader::~Shader() {
+    if (m_id != 0) {
         glDeleteProgram(m_id);
+    }
+}
+
+auto Shader::tryAndFindUniformfromCache([[maybe_unused]] GLuint shader_id,
+                                        std::string_view name_of_unifrom) -> GLint {
+    if (m_uniform_loc_cache.contains(name_of_unifrom.data())) {
+        return m_uniform_loc_cache.at(name_of_unifrom.data());
+    } else {
+        GLint temp_loc = glad_glGetUniformLocation(shader_id, name_of_unifrom.data());
+        m_uniform_loc_cache.insert({name_of_unifrom.data(), temp_loc});
+        return temp_loc;
     }
 }

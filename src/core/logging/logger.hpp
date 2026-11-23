@@ -1,7 +1,7 @@
-/* 
-* This class mostly will represent KOHI engine's
-* Logger and have a few differences only
-* author: Debargha Bose
+/*
+ * This class mostly will represent KOHI engine's
+ * Logger and have a few differences only
+ * author: Debargha Bose
  */
 #pragma once
 
@@ -18,64 +18,57 @@
 #define LOG_INFO_ENABLED 1
 
 #ifndef NDEBUG
-    #define LOG_DEBUG_ENABLED 1
-    #define LOG_TRACE_ENABLED 1
+#define LOG_DEBUG_ENABLED 1
+#define LOG_TRACE_ENABLED 1
 #else
     // Release builds drop Debug/Trace entirely
-    #define LOG_DEBUG_ENABLED 0
-    #define LOG_TRACE_ENABLED 0
+#define LOG_DEBUG_ENABLED 0
+#define LOG_TRACE_ENABLED 0
 #endif
 
 // Prepend [HH:MM:SS.mmm] to every line
 #ifndef LOG_TIMESTAMP_ENABLED
-    #define LOG_TIMESTAMP_ENABLED 1
+#define LOG_TIMESTAMP_ENABLED 1
 #endif
 
 // ANSI colors, only used when stderr is a terminal
 #ifndef LOG_COLOR_ENABLED
-    #define LOG_COLOR_ENABLED 1
+#define LOG_COLOR_ENABLED 1
 #endif
 
 namespace Log {
-    enum class Level {
-        Fatal = 0,
-        Error = 1,
-        Warn = 2,
-        Info = 3,
-        Debug = 4,
-        Trace = 5
-    };
+enum class Level { Fatal = 0, Error = 1, Warn = 2, Info = 3, Debug = 4, Trace = 5 };
 
-    static_assert(
-        Level::Fatal < Level::Error
-            && Level::Error < Level::Warn
-            && Level::Warn < Level::Info
-            && Level::Info < Level::Debug
-            && Level::Debug < Level::Trace,
-        "Log levels must be ordered from most severe to least severe."
-    );
+static_assert(Level::Fatal < Level::Error && Level::Error < Level::Warn &&
+                  Level::Warn < Level::Info && Level::Info < Level::Debug &&
+                  Level::Debug < Level::Trace,
+              "Log levels must be ordered from most severe to least severe.");
 
-    // Thread safe: level is atomic and writes are serialized.
-    [[nodiscard]] auto isEnabled(Level level) -> bool;
-    void setLevel(Level level);
+// Thread safe: level is atomic and writes are serialized.
+[[nodiscard]] auto isEnabled(Level level) -> bool;
+void setLevel(Level level);
 
-    [[nodiscard]] auto levelFromString(std::string_view name) -> std::optional<Level>;
+[[nodiscard]] auto levelFromString(std::string_view name) -> std::optional<Level>;
 
-    // Reads LOG_LEVEL (fatal|error|warn|info|debug|trace) and overrides the
-    // current level when the variable is set to a valid value.
-    void initFromEnv();
+// Reads LOG_LEVEL (fatal|error|warn|info|debug|trace) and overrides the
+// current level when the variable is set to a valid value.
+void initFromEnv();
 
-    void write(Level level, const char* file, int line, std::string_view message);
+void write(Level level, const char *file, int line, std::string_view message);
 
-    template <typename... Args>
-    void output(Level level, const char* file, int line,
-                std::format_string<Args...> fmt, const Args&... args) {
-        if (!isEnabled(level)) {
-            return;
-        }
-        write(level, file, line,
-              std::vformat(fmt.get(), std::make_format_args(args...)));
+template <typename... Args>
+void output(Level level, const char *file, int line, std::format_string<Args...> fmt,
+            const Args &...args) {
+    if (!isEnabled(level)) {
+        return;
     }
+    write(level, file, line, std::vformat(fmt.get(), std::make_format_args(args...)));
+}
+[[noreturn]] inline void assertFail(const char *file, int line, std::string_view expr,
+                                    std::string_view message) {
+    output(Level::Error, file, line, "Assertion failed: {} -- {}", expr, message);
+    std::abort();
+}
 }
 
 //? macros for LOG calling
@@ -110,13 +103,10 @@ namespace Log {
 
 // Compiles out completely in release builds (NDEBUG).
 #ifdef NDEBUG
-    #define KASSERT(condition, message) ((void)0)
+#define KASSERT(condition, message) ((void)0)
 #else
-    #define KASSERT(condition, message) \
-        do { \
-            if (!(condition)) { \
-                KERROR("Assertion failed: {} -- {}", #condition, message); \
-                std::abort(); \
-            } \
-        } while (false)
+#define KASSERT(condition, message)         \
+    (static_cast<bool>(condition) ? (void)0 \
+                                  : Log::assertFail(__FILE__, __LINE__, #condition, (message)))
+
 #endif
