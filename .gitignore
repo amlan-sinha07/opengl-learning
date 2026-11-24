@@ -92,3 +92,10 @@ LEARNING.md
 # Catch-all text/html from the original project
 *.txt
 *.html
+
+*.h
+*.md
+*.png
+*.svg
+*.css
+*.js
