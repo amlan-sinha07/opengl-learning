@@ -1,101 +1,46 @@
 # Build output
-bin/
-obj/
+/bin/
+/build/
+/build-*/
+/obj/
 *.exe
 *.o
-*.out
-*.app
-
-# Prerequisites
-*.d
-
-# Compiled Object files
+*.obj
 *.slo
 *.lo
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
+*.d
 *.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
+*.ilk
 *.a
 *.lib
-
-# Build directories
-build/
-Build/
-build-*/
-
-# CMake generated files
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
-makefile
-install_manifest.txt
-compile_commands.json
-
-# Temporary files
+*.dll
+*.so
+*.dylib
+*.so.*
 *.tmp
 *.log
 *.bak
 *.swp
 
-# vcpkg
-vcpkg_installed/
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
 
-# debug information files
-*.dwo
-
-# test output & cache
+# Test output and caches
 Testing/
 .cache/
 
-# Vendored dependencies
-dependencies/
-
-# VS Code
+# IDE and editor files
 .vscode/
+.idea/
 
-# Windows
+# Operating system files
 Thumbs.db
 Desktop.ini
+.DS_Store
 
-# Local build scripts and scratch
-build.bat
-doc/
-ref/
-scene.hpp
-src/gl.c
-.power_builder.conf
-LEARNING.md
-
-# Catch-all text/html from the original project
-*.txt
-*.html
-
-*.h
-*.md
-*.png
-*.svg
-*.css
-*.js
+# Local dependency copies; use MSYS2 for GLFW and GLM
+/include/
