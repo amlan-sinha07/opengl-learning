@@ -86,7 +86,7 @@ namespace {
 #else
         return false;
 #endif
-    }
+}
 
     [[nodiscard]]
     auto formatTimestamp() -> std::string {
@@ -184,9 +184,9 @@ void Log::write(Level level, const char* file, int line, std::string_view messag
 #endif
 
     text += std::format(" {}:{}: {}\n",
-                        file != nullptr ? file : "<unknown>",
-                        line,
-                        message);
+                 file != nullptr ? file : "<unknown>",
+                 line,
+                 message);
 
     {
         const std::scoped_lock lock(writeMutex);
