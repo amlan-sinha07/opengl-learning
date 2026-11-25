@@ -29,7 +29,7 @@ public:
     Window(Window &&) noexcept;
     auto operator=(Window &&) noexcept -> Window &;
 
-    [[nodiscard]] bool shouldClose() const;
+    [[nodiscard]] auto shouldClose() const -> bool;
 
     void swapBuffers() const;
     void pollEvents() const;

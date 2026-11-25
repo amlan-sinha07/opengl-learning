@@ -7,6 +7,9 @@
 #include "core/debugging/debug.hpp"
 #include "core/logging/logger.hpp"
 
+#include "core/gui/gui_helper.hpp"
+#include "core/debugging/debugging_ui.hpp"
+
 #include "renderer/shader/shader.hpp"
 #include "renderer/mesh/vertex.hpp"
 #include "renderer/mesh/mesh.hpp"
@@ -87,15 +90,29 @@ auto main() -> int {
 
         glm::vec3 baseScale{1.0F, 1.0F, 1.0F};
         glm::vec3 pulseScale{1.5F, 1.5F, 1.5F};
-        double time = 0.0F;
+        
+        std::vector<MeshVertex> animatedVertices;
+        animatedVertices.reserve(Vertices.size());
 
-        while (0 == window.shouldClose()) {
-            time = glfwGetTime();
-            double pulse = (std::sin(time) + 1.0F) * 0.5F;
+        gui_config config;
+        config.window=window.getNativeWindow();
+
+        double now = 0.0F;
+        // double last_frame_time = 0.0F
+        gui_helper::guiInit(config);
+
+        while (true) {
+
+            if (0 != window.shouldClose()) {
+                break;
+            }
+
+            window.pollEvents();
+            now = glfwGetTime();
+            double pulse = (std::sin(now) + 1.0F) * 0.5F;
             glm::vec3 currentScale = glm::mix(baseScale, pulseScale, static_cast<float>(pulse));
 
-            std::vector<MeshVertex> animatedVertices;
-            animatedVertices.reserve(Vertices.size());
+            animatedVertices.clear();
             for (const auto &v : Vertices) {
                 animatedVertices.push_back({.Position = v.Position * currentScale,
                                             .Color = v.Color /* , .Normal=v.Normal */});
@@ -108,10 +125,11 @@ auto main() -> int {
             shader.use();
             shader.setMat4("uMVP", glm::mat4(1.0f));
             renderer.draw(movedRectangle, shader);
+            gui_helper::guiRender(testFrame, config);
 
             window.swapBuffers();
-            window.pollEvents();
         }
+        gui_helper::guiShutdown();
 
         KINFO("Application stopped");
     } catch (const std::exception &Err) {
