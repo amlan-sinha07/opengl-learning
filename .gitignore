@@ -44,3 +44,6 @@ Desktop.ini
 
 # Local dependency copies; use MSYS2 for GLFW and GLM
 /include/
+/.power_builder.conf
+/LEARNING.md
+/imgui.ini
